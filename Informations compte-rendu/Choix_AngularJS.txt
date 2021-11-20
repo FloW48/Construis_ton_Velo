@@ -1,0 +1,19 @@
+POINTS POSITIFS:
+- Géré par Google -> * Les développeurs sont fiables
+		     * Peu de chance que ça disparaisse
+- Architecture MVC -> * Facilite le developpement d'applications interactives
+- Large communauté -> * Aide pour résoudre des problèmes
+
+POINTS NEGATIFS:
+- Pas le + simple à apprendre
+
+
+COMPARAISON AVEC REACTJS:
+- Peu de documentation
+- Juste une blibliothèque, il faut donc inclure d'autres blibliothèques pour certains aspects de l'application
+
+COMPARAISON AVEC VUEJS:
+- VueJS moins compliqué à apprendre
+- Récent donc beaucoup de mises à jours et oblige les devs à réapprendre le langage
+
+
