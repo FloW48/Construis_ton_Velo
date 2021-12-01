@@ -1,0 +1,7 @@
+A faire pour Lundi 6 Décembre:
+
+-Modifier structure de la BD actuelle
+-Manipulations basiques de Base de données:
+	-Importer données d'un site sur PC personnel
+	-Exporter données d'une BD 
+	-Trouver des bugs/choses compliquées
