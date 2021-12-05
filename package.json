@@ -19,6 +19,9 @@
   "dependencies": {
     "axios": "^0.24.0",
     "canvas": "^2.8.0",
-    "jsdom": "^19.0.0"
+    "jsdom": "^19.0.0",
+    "mongoose": "^6.0.14",
+    "node": "^17.2.0",
+    "nodejs": "0.0.0"
   }
 }
