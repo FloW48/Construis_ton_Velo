@@ -17,8 +17,6 @@ async function start(){
       resources: "usable",
       url:"https://www.probikeshop.fr/bmx/"
     });
-    const file = fs.readFileSync("page.html", "utf8")
-    const dom = new JSDOM(file)
     const { document } = dom.window;
 
     let bigCategories = document.querySelectorAll(".subMenuElem")
@@ -84,9 +82,9 @@ async function getDataOfBikes(component){
         const { data } = await axios.get(elem.url)
 
         const dom = new JSDOM(data, {
-        runScripts: "dangerously",
-        resources: "usable",
-        url:"https://www.probikeshop.fr/bmx/"
+            runScripts: "dangerously",
+            resources: "usable",
+            url:elem.url
         }); 
 
         const { document } = dom.window;
