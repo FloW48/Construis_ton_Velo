@@ -1,0 +1,24 @@
+{
+  "name": "construis_ton_velo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "scraping.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FloW48/Construis_ton_Velo.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FloW48/Construis_ton_Velo/issues"
+  },
+  "homepage": "https://github.com/FloW48/Construis_ton_Velo#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "canvas": "^2.8.0",
+    "jsdom": "^19.0.0"
+  }
+}
