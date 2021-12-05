@@ -1,7 +1,7 @@
 //Import the mongoose module
 var mongoose = require('mongoose');
 
-mongoose.createConnection('mongodb://admin:admin@localhost:27017/creer_ton_velo');
+mongoose.createConnection('mongodb://admin:admin@localhost:27017/creer_ton_velo').then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
 //Get the default connection
 var db = mongoose.connection;
@@ -62,7 +62,20 @@ buttonGuidon.addEventListener("click", ()=>{
             id_partie: 1
         }
     }));
-    console.log("Test une fonction juste après");
+    console.log("Test pour tout afficher");
+    console.log(db.getCollection('equipement').find({}));
+});
+
+let buttonSelle = document.getElementById("onlyselle");
+
+buttonSelle.addEventListener("click", ()=>{
+    console.log("Voici toutes les selles : ");
+    console.log(equipement.aggregate({
+        $filter: {
+            id_partie: 2
+        }
+    }));
+    console.log("Test pour tout afficher");
     console.log(db.getCollection('equipement').find({}));
 });
 
