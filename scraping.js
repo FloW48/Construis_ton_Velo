@@ -1,7 +1,5 @@
 const axios = require("axios")
-const fs = require("fs")
 const {JSDOM} = require("jsdom")
-const { type } = require("os")
 const URL = "https://www.probikeshop.fr/bmx/"
 let dataBikes = {}
 
@@ -120,6 +118,4 @@ async function getDataOfBikes(component){
 
 
     }
-
-    fs.writeFileSync("json.json", JSON.stringify(dataBikes))
 }
