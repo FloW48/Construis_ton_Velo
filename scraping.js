@@ -11,12 +11,12 @@ start()
 async function start(){
 
     
-    /* const { data } = await axios.get(URL) */
-    /* const dom = new JSDOM(data, {
+    const { data } = await axios.get(URL)
+    const dom = new JSDOM(data, {
       runScripts: "dangerously",
       resources: "usable",
       url:"https://www.probikeshop.fr/bmx/"
-    }); */
+    });
     const file = fs.readFileSync("page.html", "utf8")
     const dom = new JSDOM(file)
     const { document } = dom.window;
@@ -44,7 +44,6 @@ async function start(){
     for(let midCat of middleCategories){
         for(let subMenuElem of midCat.children){
             if(subMenuElem.classList.contains("subMenuElemLvl2")){
-                console.log("l2")
                 let urlIdentifier = subMenuElem.children[0].href.split("/")[4].split("-")
                 urlIdentifier = urlIdentifier[0] + urlIdentifier[1]
                 if(urlIdentifier != lastUrl){
