@@ -1,0 +1,14 @@
+A faire pour Vendredi 17 Décembre 11h30:
+
+-Enregistrer les images des produits, 2 solutions:
+	-Enregistrer URL dans la BD
+	-Enregistrer les images dans le stockage local (à favoriser)	-->Utilisation localStorage
+
+-Commenter précisemment le code
+-Bien séparer les différentes fonctions (pas tout mettre dans une seule)
+
+-Faire le lien scrapping--BD
+
+-Commencer à travailler sur le design du site
+
+-Scrapping: Utilisation des expressions régulières (regex)
