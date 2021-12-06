@@ -2,49 +2,63 @@
 <head>
     <script src="index.js"></script>
     <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 <body>
-    <div>
-        <a href="home.html"><button>Home</button></a>
-        <a href="myBikes.html"><button style="float:right;">Mes vélos (apparaît si connecté)</button></a>
-        <a href="connexion.html"><button style="float:right;">Se connecter</button></a>
-        <div style="border: solid; width:20%; margin-top: 30px">
-            <span>Cadre</span>
-            <button style="float:right">+</button>
-        </div>
-        <div style="float: right; border: solid; margin-right : 80px">
-            Mon vélo
-            <br>
-            <span>Cadre : </span>
-            <br>
-            <span>Roues : </span>
-            <br>
-            <span>Guidon : </span>
-            <br>
-            <span>Vitesses : </span>
-        </div>
-        <div style="border: solid; width:20%; margin-top: 30px">
-            <span>Roues</span>
-            <button style="float:right">+</button>
-        </div>
-        <div style="border: solid; width:20%; margin-top: 30px">
-            <span>Guidon</span>
-            <button style="float:right">+</button>
-        </div>
-        <div style="border: solid; width:20%; margin-top: 30px">
-            <span>Vitesses</span>
-            <button style="float:right">+</button>
-        </div>
-        <div style="border: solid; width:20%; margin-top: 30px; margin-left:40%; text-align:center">
-            <span>IMAGE VELO</span>
-            <br>
-            <button style="float: left;">Sauvegarder</button>
-            <button style="float:right">Payer</button>
-        </div>
+    <div class="top">
+        <a href="home.html">
+            <span id="nomSite">
+                <img src="images/site/logo_temp.png" alt="Logo du site" id="logoSite">NomDuSite
+            </span>
+        </a>
+        <a href="myBikes.html">
+            <button style="float:right;">Mes vélos (apparaît si connecté)</button>
+        </a>
+        <a href="connexion.html">
+            <button style="float:right;">Se connecter</button>
+        </a>
     </div>
 
-    <button id ="onlyguidon" style="float: right;"> Les Guidons</button>
+    <div class="monVeloInfos">
+        <div class="titreSection">INFOS VELO</div>
+        Mon vélo
+        <br>
+        <span>Cadre : </span>
+        <br>
+        <span>Roues : </span>
+        <br>
+        <span>Guidon : </span>
+        <br>
+        <span>Vitesses : </span>
+    </div>
+    <div class="selectionPieces">
+        <div class="titreSection">SELECTION PIECES</div>
+        <div class="piece">
+            <span>Cadre</span>
+            <button>+</button>
+        </div>
+        
+        <div class="piece">
+            <span>Roues</span>
+            <button>+</button>
+        </div>
+        <div class="piece">
+            <span>Guidon</span>
+            <button>+</button>
+        </div>
+        <div class="piece">
+            <span>Vitesses</span>
+            <button>+</button>
+        </div>
+    </div>
+    <div class="monVeloImage">
+        <div class="titreSection">IMAGE VELO</div>
+        <button style="float: left;">Sauvegarder</button>
+        <button style="float:right">Payer</button>
+    </div>
 
-    <button id ="onlyselle" style="float: left;"> Les Selles</button>
+    <!--<button id ="onlyguidon" style="float: right;"> Les Guidons</button>
+
+    <button id ="onlyselle" style="float: left;"> Les Selles</button>-->
 
 </body>
