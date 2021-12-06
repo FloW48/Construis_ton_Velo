@@ -20,7 +20,7 @@ app.get('/', function(req, res) {
 //Import the mongoose module
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://root:admin@localhost:27017/creer_ton_velo').then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
+mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
 const { Schema } = mongoose;
 //Get the default connection
@@ -73,6 +73,4 @@ equipement.insertMany(
         console.log(error);
     });
 
-
-
-
+    console.log(equipement.findById({id_partie: 1}));
