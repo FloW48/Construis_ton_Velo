@@ -70,7 +70,7 @@ button{
     position:relative;
     background-color:red;
     height: 50px;
-    border-bottom:solid 2px black;
+    border-bottom:solid 1px darkred;
     line-height: 50px;
 }
 
@@ -166,4 +166,18 @@ button{
 
     border-radius: 0 5px 0 0;
     background-color:red;
+}
+
+table{
+    margin: 0 auto;
+    font-size:20px;
+}
+
+tr{
+    height:25px;
+}
+
+td {
+    width:200px;
+    text-align: center;
 }

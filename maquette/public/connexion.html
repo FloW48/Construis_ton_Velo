@@ -1,19 +1,33 @@
 <!DOCTYPE html>
 <head>
+    <script src="../index.js"></script>
     <title>Connexion</title>
+    <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 <body>
-    <div>
-        <a href="home.html"><button>Home</button></a>
-        <a href="connexion.html"><button style="float:right;">Se connecter</button></a>
+    <div class="top">
+        <a href="home.html">
+            <span id="nomSite">
+                <img src="images/site/logo_temp.png" alt="Logo du site" id="logoSite">NomDuSite
+            </span>
+        </a>
+    </div>
+    <div class="monVeloImage">
+        <div class="titreSection">CONNEXION</div>
         <div style="text-align: center; margin-top:50px">
             <form action="home.html">
-                <label for="mail">Mail :</label><br>
-                <input type="email" id="mail" name="mail"><br>
-                <label for="password">Password :</label><br>
-                <input type="password" id="password" name="password"><br>
+                <table>
+                    <tr>
+                        <td><label for="mail">Adresse e-mail :</label></td>
+                        <td><input type="email" id="mail" name="mail"></td>
+                    </tr>
+                    <tr>
+                        <td>Mot De Passe :</td>
+                        <td><input type="password" id="password" name="password"></td>
+                    </tr>
+                </table>
                 <button>Mot de passe oublié</button><br>
-                <input type="submit" value="Submit">
+                <input type="submit" value="Connexion">
               </form>
         </div>
     </div>
