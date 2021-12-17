@@ -1,0 +1,9 @@
+PROCHAINE REUNION: Jeudi 6 Janvier à 10h
+
+Objectif: Avoir une application qui fonctionne d'ici fin Janvier
+
+- BD:	-Maquette BD (établir les différentes tables, leurs attributs et les liens) 	
+	-Exporter données d'un site dans la BD (données basiques au début: ID, prix, nom)
+	-Utiliser les données sur le site vélo (afficher données)
+
+-Essayer de varier les tâches de chacun
