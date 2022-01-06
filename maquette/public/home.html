@@ -1,8 +1,9 @@
 <!DOCTYPE html>
+<html>
 <head>
-    <script src="../index.js"></script>
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <script src="./home.js"></script>
 </head>
 <body>
     <div class="top">
@@ -19,6 +20,36 @@
         </a>
     </div>
 
+
+
+
+    <form action="./api/equipement/newEquipement" method="post">
+        <div>
+            <label for="_id">id:</label>
+            <input name="_id" id="_id" value="50">
+        </div>
+        <div>
+            <label for="id_partie">id partie</label>
+            <input name="id_partie" id="id_partie" value="">
+        </div>
+        <div>
+            <label for="prix">prix</label>
+            <input name="prix" id="prix" value="">
+        </div>
+        <div>
+            <label for="lien">lien</label>
+            <input name="lien" id="lien" value="">
+        </div>
+        <div>
+            <label for="carbone">carbone</label>
+            <input name="carbone" id="carbone" value="">
+        </div>
+        <div>
+            <button>ADD TO DB</button>
+        </div>
+    </form>
+
+
     <div class="monVeloInfos">
         <div class="titreSection">INFOS VELO</div>
         Mon vélo
@@ -31,30 +62,42 @@
         <br>
         <span>Vitesses : </span>
     </div>
+
     <div class="selectionPieces">
         <div class="titreSection">SELECTION PIECES</div>
         <div class="piece">
             <span>Cadre</span>
-            <button>+</button>
+            <button id="showCadres">+</button>
         </div>
         
         <div class="piece">
             <span>Roues</span>
-            <button>+</button>
+            <button id="showRoues">+</button>
         </div>
         <div class="piece">
             <span>Guidon</span>
-            <button>+</button>
+            <button id="showGuidons">+</button>
         </div>
         <div class="piece">
             <span>Vitesses</span>
-            <button>+</button>
+            <button id="showVitesses">+</button>
+        </div>
+        <div class="piece">
+            <span>Selles</span>
+            <button id="showSelles">+</button>
         </div>
     </div>
+
     <div class="monVeloImage">
         <div class="titreSection">IMAGE VELO</div>
         <button style="float: left;">Sauvegarder</button>
         <a href="payment.html"><button style="float:right">Payer</button></a>
+    </div>
+
+    <div id="popupPiece" class="popup">
+        <span id="closePopup">&times;</span>
+        <div class="popup-content">        
+        </div>
     </div>
 
     <!--<button id ="onlyguidon" style="float: right;"> Les Guidons</button>
@@ -62,3 +105,4 @@
     <button id ="onlyselle" style="float: left;"> Les Selles</button>-->
 
 </body>
+</html>
