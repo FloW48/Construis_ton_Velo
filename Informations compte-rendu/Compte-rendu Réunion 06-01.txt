@@ -1,0 +1,7 @@
+PROCHAINE REUNION: Mercredi 12 Janvier à 11h15
+
+- Pour l'instant, utiliser qu'un seul site source pour importer les données
+
+- Gestion inscriptions/connexions (Pas une priorité pour l'instant)
+	Soit - 2 BD différentes avec l'une inclue dans l'autre
+	     - Deux tables séparées (+ facile)
