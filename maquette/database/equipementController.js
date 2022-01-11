@@ -35,8 +35,10 @@ const newEquipement = (req, res, next) => {
     let equipement = new Equipement({
         _id: req.body._id, 
         id_partie: req.body.id_partie,
+        nom: req.body.nom,
         prix: req.body.prix,
         lien: req.body.lien,
+        image: req.body.image,
         carbone: req.body.carbone
     })
     equipement.save()

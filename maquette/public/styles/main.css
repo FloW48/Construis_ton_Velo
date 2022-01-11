@@ -53,7 +53,9 @@ q:before, q:after {
     content: none;
 }
 
-table {
+table{
+    margin: 0 auto;
+    font-size:20px;
     border-collapse: collapse;
     border-spacing: 0;
 }
@@ -107,12 +109,13 @@ button{
 }
 
 .monVeloInfos{
-    width:350px;
-    height:550px;
-    float:right;
-    margin:15px;
+    position:relative;
+    margin:15px auto;
 
-    line-height: 100px;
+    width: 80%;
+    height:75%;
+
+    line-height: 50px;
     text-align: center;
     
     border:solid 2px red;
@@ -120,12 +123,60 @@ button{
     border-top:none;
 }
 
+.monVeloInfos table{
+    font-size: 15px;
+}
+
+.monVeloInfos td{
+    border-left: solid 2px red;
+    border-right: solid 2px red;
+    height: 50px;
+    width: 250px;
+    margin:5px;
+}
+
+.monVeloInfos tr:first-child{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.monVeloInfos button{
+    border:none;
+}
+
+
+.pieceSelected{
+    width:90%;
+    border: solid 2px black;
+    font-size: 15px;
+    margin: 15px auto;
+    transition: background-color 500ms;
+}
+
+.pieceSelected table, .pieceSelected tr:first-child, .pieceSelected td{
+    border:none;
+    font-weight: normal;
+    font-size: inherit;
+}
+
+.pieceSelected:hover{
+    background-color:rgba(255,0,0,0.25);
+}
+
+.pieceSelected img{
+    background-color: red;
+    width: 60%;
+    height: 70px;
+    margin: 10px auto;
+    display: block;
+}
+
 .monVeloImage{
     position:relative;
     margin:auto;
+
     height: 300px;
-    top:125px;
-    width: 42%;
+    width: 80%;
 
     border:solid 2px red;
     border-top-right-radius: 7px;
@@ -142,7 +193,7 @@ button{
 
 .selectionPieces{
     width:350px;
-    height:550px;
+    height:75%;
     float:left;
     margin:15px;
 
@@ -168,20 +219,6 @@ button{
     background-color:red;
 }
 
-table{
-    margin: 0 auto;
-    font-size:20px;
-}
-
-tr{
-    height:25px;
-}
-
-td {
-    width:200px;
-    text-align: center;
-}
-
 .popup {
     display: none;
     position: fixed;
@@ -203,6 +240,12 @@ td {
     overflow:auto;
 }
 
+.popup-content h1{
+    margin:5px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
 #closePopup {
     color: #aaaaaa;
     position:absolute;
@@ -219,12 +262,13 @@ td {
 
 .piecePopup{
     display:inline-block;
-    width:18%;
+    width:20%;
     height:48%;
     margin:0 5px;
     border: solid 2px black;
     border-radius: 5px;
     overflow:auto;
+    cursor: pointer;
     transition: background-color 500ms;
 }
 
@@ -235,17 +279,28 @@ td {
 .piecePopup h1{
     margin-top:10px;
     font-size:15px;
-    font-weight: bold;
     text-align: center;
 }
 
 .piecePopup img{
-    width:90%;
+    width:60%;
     height: 40%;
     margin: 10px auto;
-    background-color: red;
     display: block;
 }
 .piecePopup table{
     font-size:12px;
+}
+
+.piecePopup tr{
+    height:25px;
+}
+
+.piecePopup td {
+    width:200px;
+    text-align: center;
+}
+
+.selected{
+    background-color: green;
 }

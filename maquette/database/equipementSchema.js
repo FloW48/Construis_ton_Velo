@@ -2,10 +2,12 @@ const mongoose = require("mongoose")
 const Schema = mongoose.Schema
 
 const equipementSchema = new Schema({
-    _id: Number, 
+    _id: Number,
     id_partie: Number,
+    nom: String,
     prix: Number,
     lien: String,
+    image: String,
     carbone: Number
 });
 

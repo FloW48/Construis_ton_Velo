@@ -18,74 +18,51 @@
         <a href="connexion.html">
             <button style="float:right;">Se connecter</button>
         </a>
+        <a href="ajout_db_temp.html">
+            <button style="float:right;">AJOUT DONNÉES (temporaire)</button>
+        </a>
     </div>
-
-
-
-
-    <form action="./api/equipement/newEquipement" method="post">
-        <div>
-            <label for="_id">id:</label>
-            <input name="_id" id="_id" value="50">
-        </div>
-        <div>
-            <label for="id_partie">id partie</label>
-            <input name="id_partie" id="id_partie" value="">
-        </div>
-        <div>
-            <label for="prix">prix</label>
-            <input name="prix" id="prix" value="">
-        </div>
-        <div>
-            <label for="lien">lien</label>
-            <input name="lien" id="lien" value="">
-        </div>
-        <div>
-            <label for="carbone">carbone</label>
-            <input name="carbone" id="carbone" value="">
-        </div>
-        <div>
-            <button>ADD TO DB</button>
-        </div>
-    </form>
 
 
     <div class="monVeloInfos">
         <div class="titreSection">INFOS VELO</div>
-        Mon vélo
-        <br>
-        <span>Cadre : </span>
-        <br>
-        <span>Roues : </span>
-        <br>
-        <span>Guidon : </span>
-        <br>
-        <span>Vitesses : </span>
-    </div>
+        <table>
+            <tr>
+                <td>CADRE</td>
+                <td>ROUES</td>
+                <td>GUIDON</td>
+                <td>VITESSES</td>
+                <td>SELLE</td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="showPiece" data-idpiece="1">
+                        <div class="pieceSelected"><h1>Sélectionner une pièce</h1></div>
+                    </button>
+                </td>
+                <td>
+                    <button class="showPiece" data-idpiece="2">
+                        <div class="pieceSelected"><h1>Sélectionner une pièce</h1></div>
+                    </button>
+                </td>
+                <td>
+                    <button class="showPiece" data-idpiece="3">
+                        <div class="pieceSelected"><h1>Sélectionner une pièce</h1></div>
+                    </button>
+                </td>
+                <td>
+                    <button class="showPiece" data-idpiece="4">
+                        <div class="pieceSelected"><h1>Sélectionner une pièce</h1></div>
+                    </button>
+                </td>
+                <td>
+                    <button class="showPiece" data-idpiece="5">
+                        <div class="pieceSelected"><h1>Sélectionner une pièce</h1></div>
+                    </button>
+                </td>
+            </tr>
+        </table>
 
-    <div class="selectionPieces">
-        <div class="titreSection">SELECTION PIECES</div>
-        <div class="piece">
-            <span>Cadre</span>
-            <button id="showCadres">+</button>
-        </div>
-        
-        <div class="piece">
-            <span>Roues</span>
-            <button id="showRoues">+</button>
-        </div>
-        <div class="piece">
-            <span>Guidon</span>
-            <button id="showGuidons">+</button>
-        </div>
-        <div class="piece">
-            <span>Vitesses</span>
-            <button id="showVitesses">+</button>
-        </div>
-        <div class="piece">
-            <span>Selles</span>
-            <button id="showSelles">+</button>
-        </div>
     </div>
 
     <div class="monVeloImage">
@@ -96,13 +73,9 @@
 
     <div id="popupPiece" class="popup">
         <span id="closePopup">&times;</span>
-        <div class="popup-content">        
+        <div class="popup-content">
         </div>
     </div>
-
-    <!--<button id ="onlyguidon" style="float: right;"> Les Guidons</button>
-
-    <button id ="onlyselle" style="float: left;"> Les Selles</button>-->
 
 </body>
 </html>
