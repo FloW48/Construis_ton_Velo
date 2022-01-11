@@ -5,14 +5,14 @@ var express = require('express')
 var bodyParser = require('body-parser') //Règle probleme de req.body = undefined lors de l'envoi d'une requete POST
 
 var app = express();
+
+const puppeteer = require('puppeteer');
 const fetch = require('node-fetch')
+const URL = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
 
 const server = require('http').createServer(app);
 
 const EquipementRoute = require('./database/equipementRoute')
-
-const puppeteer = require('puppeteer');
-const URL = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
 
 server.listen(8080, function() {
     console.log("C'est parti ! En attente de connexion sur le port 8080...");
@@ -28,9 +28,7 @@ app.get('/', function(req, res) {
     res.sendFile(__dirname + '/public/home.html');
 });
 
-app.use('/api/equipement',EquipementRoute)
-
-
+app.use('/api/equipement',EquipementRoute);
 
 //Import the mongoose module
 var mongoose = require('mongoose');
@@ -52,15 +50,52 @@ async function scrapeProduct(url){
         executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
         headless: false,
     });
-    const page = await browser.newPage();
-    await page.goto(url);
+    const page = await browser.newPage()
+    await page.goto(url)
 
-    const [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
+    let prix = [];
+    prix = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll(".product_price")).map(x => x.textContent);
+    });
+    let regexPrix = /[0-9]{1-5},[0-9]{2}/;
+    prix = prix.map(function (el) {
+        return el.trim().split(regexPrix);
+    })
+    console.log(prix);
+
+    let imgProduct = [];
+    imgProduct = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll(".productBloc_img columns")).map(x => x.querySelector("img").src);
+    });
+
+    console.log(imgProduct);
+
+    let srcTxt = [];
+    let [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[2]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[5]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[4]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[5]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[10]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[11]/div/a/div[1]/img');
+    srcTxt.push(await (await el.getProperty('src')).jsonValue());
+
+    console.log(srcTxt);
+
+    await browser.close();
+
+    /*const [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
 
     const src = await el.getProperty('src');
     const srcTxt = await src.jsonValue();
 
-    console.log({srcTxt});
+    console.log({srcTxt});*/
 
     browser.close();
 
@@ -70,7 +105,7 @@ async function scrapeProduct(url){
         nom: "cadre 7894789a489s4a189",
         prix: 250,
         lien: "iss.com",
-        image: srcTxt,
+        image: srcTxt[0],
         carbone: 50
     };
     
@@ -84,6 +119,6 @@ async function scrapeProduct(url){
     return srcTxt;
 }
 
-//scrapeProduct(URL)
+scrapeProduct(URL)
 
 
