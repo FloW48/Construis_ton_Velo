@@ -46,22 +46,32 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 //Récupère un élément depuis un lien et l'ajoute à la BD (pour l'instant: seulement image)
 async function scrapeProduct(url){
-    const browser = await puppeteer.launch({
-        executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
-        headless: false,
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage()
     await page.goto(url)
 
-    let prix = [];
-    prix = await page.evaluate(() => {
+    let prixTable = [];
+    prixTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".product_price")).map(x => x.textContent);
     });
     let regexPrix = /[0-9]{1-5},[0-9]{2}/;
-    prix = prix.map(function (el) {
+    prixTable = prixTable.map(function (el) {
         return el.trim().split(regexPrix);
-    })
-    console.log(prix);
+    });
+    for(let i =0; i <prixTable.length; i++){
+        prixTable[i][0] = prixTable[i][0].replace(/,/g, ".");
+        if(prixTable[i][0].includes('-')){
+            prixTable[i] = prixTable[i][0].substring(32,38);
+        }
+        if(prixTable[i][0].includes('€')){
+            prixTable[i] = prixTable[i][0].substring(0,6);
+        }
+    }
+    for(let i=0; i<prixTable.length; i++){
+        prixTable[i] = parseFloat(prixTable[i]);
+    }
+
+    console.log(prixTable);
 
     let imgProduct = [];
     imgProduct = await page.evaluate(() => {
@@ -83,7 +93,7 @@ async function scrapeProduct(url){
     srcTxt.push(await (await el.getProperty('src')).jsonValue());
     [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[10]/div/a/div[1]/img');
     srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[11]/div/a/div[1]/img');
+    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[10]/div/a/div[1]/img');
     srcTxt.push(await (await el.getProperty('src')).jsonValue());
 
     console.log(srcTxt);
