@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
     var elements_showPieces = document.getElementsByClassName("showPiece");
+    var importDataPreset = document.getElementById("importDataPreset");
 
     //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
     var function_showPieces = async function() {
@@ -153,7 +154,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     for (var i = 0; i < elements_showPieces.length; i++) {
         elements_showPieces[i].addEventListener('click', function_showPieces, false);
     }
-
+    
     closePopup.onclick = function() {
         document.getElementsByClassName("popup-content")[0].innerHTML="";
         popupPiece.style.display = "none";
@@ -221,5 +222,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         pieceSelected.appendChild(table)
     }
 
+    importDataPreset.onclick=async function(){
+        fetch('http://localhost:8080/importDataPreset')
+    }
 
 });

@@ -54,4 +54,19 @@ const newEquipement = (req, res, next) => {
     })
 }
 
-module.exports = {showAll, showPieces, newEquipement} 
+const deleteAll  = (req, res, next) => {
+    Equipement.deleteMany({})
+    .then(response => {
+        res.json({
+            message: "Tous les équipements ont bien été supprimés"
+        })
+    })
+    .catch(error => {
+        res.json({            
+            message: 'deleteAll: Une erreur est survenue'
+        })
+    })
+}
+
+
+module.exports = {showAll, showPieces, newEquipement, deleteAll} 

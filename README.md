@@ -9,6 +9,6 @@ Packages à installer:
 - npm install node-fetch@2.6.1
 - npm install body-parser --save
 
-Insérer données dans BD: (en cours)
+Insérer données dans BD:
 
--Bouton 'Importer données' sur la page principale 'home.html' 
+- Bouton 'Importer données' sur la page principale 'home.html' 

@@ -3,11 +3,11 @@
 // Chargement des modules 
 var express = require('express')
 var bodyParser = require('body-parser') //Règle probleme de req.body = undefined lors de l'envoi d'une requete POST
+const puppeteer = require('puppeteer');
+const fetch = require('node-fetch')
 
 var app = express();
 
-const puppeteer = require('puppeteer');
-const fetch = require('node-fetch')
 const URL = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
 
 const server = require('http').createServer(app);
@@ -41,7 +41,6 @@ var db = mongoose.connection;
 
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
 
 
 //Récupère un élément depuis un lien et l'ajoute à la BD (pour l'instant: seulement image)
@@ -101,10 +100,8 @@ async function scrapeProduct(url){
     await browser.close();
 
     /*const [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
-
     const src = await el.getProperty('src');
     const srcTxt = await src.jsonValue();
-
     console.log({srcTxt});*/
 
     browser.close();
@@ -129,6 +126,37 @@ async function scrapeProduct(url){
     return srcTxt;
 }
 
-scrapeProduct(URL)
+//Fonction qui importe dans la BD les données prédéfinies dans le fichier 'dataPreset.json'
+//Elle est appelée lors du clique sur le bouton 'IMPORTER DONNEES' sur la page principale
+//  /!\ Supprime toutes les données déjà présentes dans la BD /!\
+app.get('/importDataPreset', async function(req, res) {
+    var dataPreset = require('./dataPreset.json') //Données prédéfinies à charger
 
+    await fetch('http://localhost:8080/api/equipement/deleteAll');  //Supprime tous les éléments présents dans la collection 'Equipement'
 
+    let index=0;
+
+    dataPreset.forEach(function(element){
+        let piece = {
+            _id: index,
+            id_partie: element.id_partie,
+            nom: element.nom,
+            prix: element.prix,
+            lien: element.lien,
+            image: element.image,
+            carbone: element.carbone
+        };
+        console.log(piece)
+        
+        fetch('http://localhost:8080/api/equipement/newEquipement', {
+            method: 'POST',
+            body: JSON.stringify(piece),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => res.json())
+          .then(json => console.log(json));
+          
+        index ++;
+    });
+  });
+
+//scrapeProduct(URL)

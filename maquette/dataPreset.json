@@ -1,0 +1,127 @@
+[{
+  "_id": 1,
+  "id_partie": 1,
+  "nom": "cadre x123",
+  "prix": 120,
+  "lien": "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html",
+  "image": "https://assets.probikeshop.fr/images/products2/204/192033/380x380-192033_15809761945882.jpg",
+  "carbone": 50,
+  "__v": 0
+},{
+  "_id": 20,
+  "id_partie": 1,
+  "nom": "cadre 7894789a489s4a189",
+  "prix": 250,
+  "lien": "iss.com",
+  "image": "https://assets.probikeshop.fr/images/products2/204/192033/380x380-192033_15809761945882.jpg",
+  "carbone": 50,
+  "__v": 0
+},{
+  "_id": 2,
+  "id_partie": 1,
+  "nom": "cadre 874",
+  "prix": 230,
+  "lien": "lien1",
+  "image": "image1",
+  "carbone": 62,
+  "__v": 0
+},{
+  "_id": 3,
+  "id_partie": 1,
+  "nom": "cadre adxs",
+  "prix": 175,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 74,
+  "__v": 0
+},{
+  "_id": 4,
+  "id_partie": 2,
+  "nom": "roue 121",
+  "prix": 50,
+  "lien": "lien1",
+  "image": "image1",
+  "carbone": 20,
+  "__v": 0
+},{
+  "_id": 5,
+  "id_partie": 2,
+  "nom": "roue as8q98",
+  "prix": 125,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 55,
+  "__v": 0
+},{
+  "_id": 6,
+  "id_partie": null,
+  "nom": "roue as8q98",
+  "prix": 125,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 55,
+  "__v": 0
+},{
+  "_id": 7,
+  "id_partie": 3,
+  "nom": "guidon a5f6",
+  "prix": 100,
+  "lien": "lien1",
+  "image": "image1",
+  "carbone": 78,
+  "__v": 0
+},{
+  "_id": 8,
+  "id_partie": 3,
+  "nom": "guidon 809",
+  "prix": 125,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 85,
+  "__v": 0
+},{
+  "_id": 9,
+  "id_partie": 4,
+  "nom": "vitesses q64",
+  "prix": 50,
+  "lien": "lien1",
+  "image": "image1",
+  "carbone": 50,
+  "__v": 0
+},{
+  "_id": 10,
+  "id_partie": 4,
+  "nom": "vitesses 90+",
+  "prix": 85,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 75,
+  "__v": 0
+},{
+  "_id": 11,
+  "id_partie": 4,
+  "nom": "vitesses gdf10",
+  "prix": 78,
+  "lien": "lien3",
+  "image": "image3",
+  "carbone": 40,
+  "__v": 0
+},{
+  "_id": 12,
+  "id_partie": 5,
+  "nom": "selle sdv",
+  "prix": 40,
+  "lien": "lien1",
+  "image": "image1",
+  "carbone": 23,
+  "__v": 0
+},{
+  "_id": 13,
+  "id_partie": 5,
+  "nom": "selle df0",
+  "prix": 60,
+  "lien": "lien2",
+  "image": "image2",
+  "carbone": 30,
+  "__v": 0
+}]
