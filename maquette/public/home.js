@@ -1,7 +1,14 @@
 var pieces_selectionnees=new Array(5)
+var prixTotal=0
 
 
-
+function getTotalPrice(){
+    let total=0;
+    pieces_selectionnees.forEach(function (element){
+        total+=element.prix;
+    })
+    return total;
+}
 
 document.addEventListener("DOMContentLoaded", async function () {
     var equipement = await fetch("http://localhost:8080/api/equipement");    
@@ -11,6 +18,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     var closePopup = document.getElementById("closePopup");
     var elements_showPieces = document.getElementsByClassName("showPiece");
     var importDataPreset = document.getElementById("importDataPreset");
+
+    let prixTotalDisplay=document.getElementById("prixTotal")
+    prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
 
     //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
     var function_showPieces = async function() {
@@ -84,6 +94,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 pieces_selectionnees[idpiece-1]=piece; //Sauvegarde l'article en tant que l'article choisi
 
                 showCurrentPiece(idpiece);
+
+    
+                prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+
             });
             
             if( pieces_selectionnees[idpiece-1]!=undefined && pieces_selectionnees[idpiece-1]._id == element._id){
@@ -222,6 +236,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         pieceSelected.appendChild(table)
     }
 
+
+    //Import de données préfaites
     importDataPreset.onclick=async function(){
         fetch('http://localhost:8080/importDataPreset')
     }

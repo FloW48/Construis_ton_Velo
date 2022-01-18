@@ -144,6 +144,10 @@ button{
     border:none;
 }
 
+.monVeloInfos #prixTotal{
+    border-top:solid 2px red;
+    font-weight: bold;
+}
 
 .pieceSelected{
     width:90%;
@@ -181,9 +185,16 @@ button{
     border:solid 2px red;
     border-top-right-radius: 7px;
     border-top:none;
+
+    overflow:auto;
 }
 .monVeloImage button{
     margin:5px;
+}
+
+.monVeloImage img{
+    height: 200px;
+    width: 200px;
 }
 
 .piece{

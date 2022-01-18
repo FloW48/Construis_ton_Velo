@@ -71,41 +71,23 @@ async function scrapePrixCadres(url){
 
     await browser.close();
 
-    //console.log(prixTable); Pour vérifier que ça extrait bien
+    console.log(prixTable); //Pour vérifier que ça extrait bien
 
     return prixTable;
 }
 
-//Récupère un élément depuis un lien et l'ajoute à la BD (pour l'instant: seulement image)
-async function scrapeProduct(url){
+//Récupère les images des cadres depuis un lien
+async function scrapeImageCadres(url){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
     await page.goto(url)
 
     let imgProduct = [];
     imgProduct = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".productBloc_img columns")).map(x => x.querySelector("img").src);
+        return Array.from(document.querySelectorAll(".productBloc_img")).map(x => x.firstElementChild.getAttribute("data-src"));
     });
 
     console.log(imgProduct);
-
-    let srcTxt = [];
-    let [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[2]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[5]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[4]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[5]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[10]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-    [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[10]/div/a/div[1]/img');
-    srcTxt.push(await (await el.getProperty('src')).jsonValue());
-
-    console.log(srcTxt);
 
     await browser.close();
 
@@ -114,6 +96,7 @@ async function scrapeProduct(url){
     const srcTxt = await src.jsonValue();
     console.log({srcTxt});*/
 
+    /*
     let piece = {
         _id: 20,
         id_partie: 1,
@@ -131,7 +114,7 @@ async function scrapeProduct(url){
     }).then(res => res.json())
       .then(json => console.log(json));
 
-    return srcTxt;
+    return srcTxt;*/
 }
 
 //Fonction qui importe dans la BD les données prédéfinies dans le fichier 'dataPreset.json'
@@ -167,5 +150,5 @@ app.get('/importDataPreset', async function(req, res) {
     });
   });
 
-scrapePrixCadres(URLCadres);
-//scrapeProduct(URLCadres);
+//scrapePrixCadres(URLCadres);
+scrapeImageCadres(URLCadres);
