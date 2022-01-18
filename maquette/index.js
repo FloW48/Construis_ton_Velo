@@ -9,6 +9,13 @@ const fetch = require('node-fetch')
 var app = express();
 
 const URLCadres = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
+const URLPneus = "https://www.probikeshop.fr/bmx/bmx-street-dirt-roues-et-pneus-pneus-c3285.html";
+const URLRoues = "https://www.probikeshop.fr/bmx/bmx-street-dirt-roues-et-pneus-roues-c3282.html";
+const URLChaines = "https://www.probikeshop.fr/bmx/bmx-street-dirt-transmission-chaines-c3294.html";
+const URLPlateaux = "https://www.probikeshop.fr/bmx/bmx-street-dirt-transmission-plateaux-c3297.html";
+const URLSelle = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-selles-c3274.html";
+const URLGuidon = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-guidons-c3268.html";
+
 
 const server = require('http').createServer(app);
 
@@ -42,13 +49,13 @@ var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-//Récupère le prix des cadres depuis un lien
-async function scrapePrixCadres(url){
+//Récupère le prix depuis un lien
+async function scrapePrix(url){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
     await page.goto(url)
 
-    //Scrapping des prix des cadres
+    //Scrapping des prix
     let prixTable = [];
     prixTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".product_price")).map(x => x.textContent);
@@ -76,8 +83,26 @@ async function scrapePrixCadres(url){
     return prixTable;
 }
 
-//Récupère les images des cadres depuis un lien
-async function scrapeImageCadres(url){
+async function scrapeNom(url){
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage()
+    await page.goto(url)
+
+    //Scrapping des prix
+    let nomTable = [];
+    nomTable = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll(".product_title")).map(x => x.textContent);
+    });
+
+    await browser.close();
+
+    console.log(nomTable); //Pour vérifier que ça extrait bien
+
+    return nomTable;
+}
+
+//Récupère les images depuis un lien
+async function scrapeImage(url){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
     await page.goto(url)
@@ -150,5 +175,6 @@ app.get('/importDataPreset', async function(req, res) {
     });
   });
 
-//scrapePrixCadres(URLCadres);
-scrapeImageCadres(URLCadres);
+//scrapePrix(URLCadres);
+//scrapeImage(URLCadres);
+scrapeNom(URLCadres);
