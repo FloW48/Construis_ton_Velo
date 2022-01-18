@@ -10,6 +10,8 @@ function getTotalPrice(){
     return total;
 }
 
+
+
 document.addEventListener("DOMContentLoaded", async function () {
     var equipement = await fetch("http://localhost:8080/api/equipement");    
     var data = await equipement.json();
@@ -21,6 +23,21 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     let prixTotalDisplay=document.getElementById("prixTotal")
     prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+
+
+    function displayImages(){
+        let containerImage=document.getElementById("containerImage")
+        containerImage.innerHTML="";
+
+        let img
+    
+        pieces_selectionnees.forEach(function (element){
+            img=document.createElement("img")
+            img.src=element.image;
+            containerImage.appendChild(img)
+        })
+        
+    }
 
     //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
     var function_showPieces = async function() {
@@ -95,7 +112,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 showCurrentPiece(idpiece);
 
-    
+                displayImages()
                 prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
 
             });
