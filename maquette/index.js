@@ -116,6 +116,7 @@ async function scrapeImage(url){
 
     await browser.close();
 
+    return imgProduct;
     /*const [el] = await page.$x('/html/body/div[1]/div/div/div/div[2]/div[7]/div[2]/div[1]/div/a/div[1]/img');
     const src = await el.getProperty('src');
     const srcTxt = await src.jsonValue();
@@ -175,6 +176,36 @@ app.get('/importDataPreset', async function(req, res) {
     });
   });
 
-//scrapePrix(URLCadres);
-//scrapeImage(URLCadres);
-scrapeNom(URLCadres);
+
+async function getCadres(URLCadres){
+    await fetch('http://localhost:8080/api/equipement/deleteAll');  //Supprime tous les éléments présents dans la collection 'Equipement'
+    
+    let prix=await scrapePrix(URLCadres);
+    let images=await scrapeImage(URLCadres);
+    let noms=await scrapeNom(URLCadres);
+
+    let nb_elem=prix.length;
+    
+
+    for(let i=0;i<nb_elem;i++){
+        let piece = {
+            _id: i,
+            id_partie: 1,
+            nom: noms[i],
+            prix: prix[i],
+            lien: "http://www.google.com",
+            image: images[i],
+            carbone: 50
+        };
+        
+        fetch('http://localhost:8080/api/equipement/newEquipement', {
+            method: 'POST',
+            body: JSON.stringify(piece),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => res.json())
+          .then(json => console.log(json));
+    }
+}
+
+
+getCadres(URLCadres);

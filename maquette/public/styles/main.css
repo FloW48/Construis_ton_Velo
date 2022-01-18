@@ -169,8 +169,8 @@ button{
 
 .pieceSelected img{
     background-color: red;
-    width: 60%;
-    height: 70px;
+    width: 100px;
+    height: 100px;
     margin: 10px auto;
     display: block;
 }
@@ -303,10 +303,11 @@ button{
 }
 
 .piecePopup img{
-    width:60%;
-    height: 40%;
+    width:100px;
+    height: 100px;
     margin: 10px auto;
     display: block;
+    border: solid 2px red;
 }
 .piecePopup table{
     font-size:12px;
