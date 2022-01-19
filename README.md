@@ -5,10 +5,9 @@ Projet de 3e année de Licence Informatique : Construis ton Vélo
 Packages à installer:
 
 - npm install express --save
-- npm install puppeteer
-- npm install node-fetch@2.6.1
+- npm install puppeteer --save
+- npm install node-fetch@2.6.1 --save
 - npm install body-parser --save
+- npm install mongoose --save
 
-Insérer données dans BD:
-
-- Bouton 'Importer données' sur la page principale 'home.html' 
+Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'

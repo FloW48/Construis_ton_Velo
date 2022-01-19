@@ -42,6 +42,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
     var function_showPieces = async function() {
         var idpiece = this.getAttribute("data-idpiece");
+        var popupcontent=document.getElementsByClassName("popup-content")[0];
+        popupcontent.innerHTML=""
+        
         var nom_piece="";
         
         popupPiece.style.display = "block";
@@ -53,13 +56,13 @@ document.addEventListener("DOMContentLoaded", async function () {
                 nom_piece="cadres"
                 break
             case "2":
-                nom_piece="roues"
+                nom_piece="pneus"
                 break
             case "3":
                 nom_piece="guidons"
                 break
             case "4":
-                nom_piece="vitesses"
+                nom_piece="plateaux"
                 break
             case "5":
                 nom_piece="selles"
@@ -70,7 +73,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         let titrePopup=document.createElement("h1");
         titrePopup.textContent="Liste des " + nom_piece + " disponibles :"
-        document.getElementsByClassName("popup-content")[0].appendChild(titrePopup)
+        popupcontent.appendChild(titrePopup)
 
         var piecesCadres= await fetch(fetch_url);
         var data = await piecesCadres.json();
