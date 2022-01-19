@@ -10,8 +10,6 @@ var app = express();
 
 const URLCadres = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
 const URLPneus = "https://www.probikeshop.fr/bmx/bmx-street-dirt-roues-et-pneus-pneus-c3285.html";
-const URLRoues = "https://www.probikeshop.fr/bmx/bmx-street-dirt-roues-et-pneus-roues-c3282.html";
-const URLChaines = "https://www.probikeshop.fr/bmx/bmx-street-dirt-transmission-chaines-c3294.html";
 const URLPlateaux = "https://www.probikeshop.fr/bmx/bmx-street-dirt-transmission-plateaux-c3297.html";
 const URLSelle = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-selles-c3274.html";
 const URLGuidon = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-guidons-c3268.html";
