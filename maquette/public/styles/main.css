@@ -144,9 +144,13 @@ button{
     border:none;
 }
 
-.monVeloInfos #prixTotal{
+.monVeloInfos .bottom{
     border-top:solid 2px red;
     font-weight: bold;
+}
+
+.monVeloInfos .bottom button{
+    border:solid 2px red;
 }
 
 .pieceSelected{

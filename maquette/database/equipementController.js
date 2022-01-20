@@ -68,5 +68,22 @@ const deleteAll  = (req, res, next) => {
     })
 }
 
+const findMinPrice = (req, res, next) => {
+    var pieceID = req.query.pieceID;
 
-module.exports = {showAll, showPieces, newEquipement, deleteAll} 
+    Equipement.find({"id_partie": pieceID}).sort({prix: 1}).limit(1)
+    .then(response => {
+        res.json({
+            response
+        })
+    })
+    .catch(error => {
+        res.json({
+            message: 'findMinPrice: Une erreur est survenue'
+        })
+    })
+}
+
+
+
+module.exports = {showAll, showPieces, newEquipement, deleteAll, findMinPrice} 

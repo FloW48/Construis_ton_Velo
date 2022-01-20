@@ -5,7 +5,11 @@ var prixTotal=0
 function getTotalPrice(){
     let total=0;
     pieces_selectionnees.forEach(function (element){
-        total+=element.prix;
+        if(element.id_partie==2){   //Cas du pneu: Lot de 2 donc prix * 2 
+            total+=element.prix*2;
+        }else{
+            total+=element.prix;
+        }
     })
     return total;
 }
@@ -256,6 +260,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         pieceSelected.appendChild(table)
     }
 
+
+    let optPrix = document.getElementById("optPrix");
+    optPrix.onclick = async function(){
+        var fetch_url;
+        var pieceMinPrice;
+        var data;
+
+        for(let i=1;i<6;i++){
+            fetch_url="http://localhost:8080/api/equipement/findMinPrice?pieceID="+i
+            pieceMinPrice= await fetch(fetch_url);
+            data = await pieceMinPrice.json();
+
+            var piece = {
+                _id: data['response'][0]._id,
+                id_partie: data['response'][0].id_partie,
+                nom: data['response'][0].nom,
+                prix: data['response'][0].prix,
+                lien: data['response'][0].lien,
+                image: data['response'][0].image,
+                carbone: data['response'][0].carbone
+            };
+
+            pieces_selectionnees[i-1]=piece;
+            showCurrentPiece(i)    
+        }
+
+        displayImages()
+        prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+
+    }
 
     //Import de données préfaites
     importDataPreset.onclick=async function(){

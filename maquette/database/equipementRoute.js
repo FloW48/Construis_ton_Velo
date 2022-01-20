@@ -6,6 +6,7 @@ router.get('/',EquipementController.showAll)
 router.get('/showPieces',EquipementController.showPieces)
 router.post('/newEquipement',EquipementController.newEquipement)
 router.get('/deleteAll',EquipementController.deleteAll)
+router.get('/findMinPrice',EquipementController.findMinPrice)
 
 
 module.exports = router 
