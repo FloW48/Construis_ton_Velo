@@ -44,6 +44,7 @@ app.use('/api/equipement',EquipementRoute);
 
 //Import the mongoose module
 var mongoose = require('mongoose');
+const { setgroups } = require('process');
 
 mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
@@ -93,12 +94,25 @@ var index=0;    //ID pour les éléménts de la BD
 async function scrapeElements2(url, id_partie){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
+    await page.setDefaultNavigationTimeout(0);
     await page.goto(url);
+    
 
     //Scrapping des prix
     let prixTable = [];
     prixTable = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".alltricks-Product-actualPrice")).map(x => x.textContent);
+
+        let produits = document.querySelectorAll(".alltricks-Product--3columns")
+        let produitsPrix=[]
+        produits.forEach(function (produit){
+            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
+                produitsPrix.push(produit.getElementsByClassName("alltricks-Product-actualPrice")[0].children[0].textContent)
+            }
+        })
+        
+        
+        return produitsPrix;
+
     });
     prixTable = prixTable.map(function (el) {
         return el.trim().split(/[0-9]{1-5},[0-9]{2}/);
@@ -121,50 +135,61 @@ async function scrapeElements2(url, id_partie){
     //Scrapping des images
     let imagesTable = [];
     imagesTable = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".alltricks-Product-picture")).map(x => x.children[0].getAttribute("src"));
+        setInterval(5000)
+        let produits = document.querySelectorAll(".alltricks-Product--3columns")
+        let produitsImages=[]
+        produits.forEach(function (produit){
+            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
+                produitsImages.push(produit.getElementsByClassName("alltricks-Product-picture")[0].children[0].getAttribute("src"))
+            }
+        })
+        
+        return produitsImages;
     });
     console.log(imagesTable);
 
     //Scrapping des noms
     let nomsTable = [];
     nomsTable = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".alltricks-Product-description")).map(x => x.textContent.trim());
+        let produits = document.querySelectorAll(".alltricks-Product--3columns")
+        let produitsNoms=[]
+        produits.forEach(function (produit){
+            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
+                produitsNoms.push(produit.getElementsByClassName("alltricks-Product-description")[0].innerHTML.trim())
+            }
+        })
+        
+        return produitsNoms;
     });
     console.log(nomsTable);
    
     //Scrapping des liens
     let liensTable = [];
     liensTable = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".alltricks-Product--grid")).map(x => ()=>{
-            if("https://www.alltricks.fr/" + x.children[3].getAttribute("href") == "https://www.alltricks.fr/null"){
-                return "https://www.alltricks.fr/" + x.children[2].getAttribute("href");
-            }else{
-                return "https://www.alltricks.fr/" + x.children[3].getAttribute("href");
+        let produits = document.querySelectorAll(".alltricks-Product--3columns")
+        let produitsLiens=[]
+        produits.forEach(function (produit){
+            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
+                produitsLiens.push("https://www.alltricks.fr/" +produit.getElementsByTagName("a")[0].getAttribute("href"))
             }
         })
-        let table2 =  Array.from(document.querySelectorAll(".alltricks-Product--grid")).map(x => "https://www.alltricks.fr/" + x.children[2].getAttribute("href"));
-        result = [];
-        for(let el1 of table){
-            let i = 0;
-            let find = false;
-            while(table2.length < i && find == false){
-                if(el1 == "https://www.alltricks.fr/null"){
-                    result[i] = el2;
-                    find = true;
-                }else{
-                    result[i] = el1;
-                    find = true; 
-                }
-            }
-        }
-        return result;
+        
+        return produitsLiens;
     });
     console.log(liensTable);
 
     //Scrapping des marques 
     let marquesTable = [];
     marquesTable = await page.evaluate(() => {
-        return Array.from(document.querySelectorAll(".alltricks-Product-brandLabel")).map(x => x.textContent.trim());
+        let produits = document.querySelectorAll(".alltricks-Product--3columns")
+        let produitsMarques=[]
+        produits.forEach(function (produit){
+            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
+                produitsMarques.push(produit.getElementsByClassName("alltricks-Product-brandLabel")[0].textContent.trim())
+            }
+        })
+        
+        return produitsMarques;
     });
 
     console.log(marquesTable);
@@ -174,6 +199,7 @@ async function scrapeElements2(url, id_partie){
 async function scrapeElements(url, id_partie){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
+    await page.setDefaultNavigationTimeout(0);
     await page.goto(url)
 
     //Scrapping des prix
@@ -253,9 +279,9 @@ async function scrapAll(){
     scrapeElements(URLGuidons,3);
     scrapeElements(URLPlateaux,4);
     scrapeElements(URLSelles,5);
-    //scrapeElements2(URLCadres2,1);
+    scrapeElements2(URLCadres2,1);
     //scrapeElements2(URLPneus2,2);
-    scrapeElements2(URLGuidons2,3);
+    //scrapeElements2(URLGuidons2,3);
     //scrapeElements2(URLPlateaux2,4);
     //scrapeElements2(URLSelles2,5);
 }
