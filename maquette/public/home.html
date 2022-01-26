@@ -4,6 +4,7 @@
     <title>Home</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
     <script src="./home.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <div class="top">
@@ -30,7 +31,7 @@
         <table>
             <tr>
                 <td>CADRE</td>
-                <td>PNEUS (x2)</td>
+                <td>PNEU (x2)</td>
                 <td>GUIDON</td>
                 <td>PLATEAU</td>
                 <td>SELLE</td>
@@ -77,6 +78,24 @@
         <button style="float: left;">Sauvegarder</button>
         <a href="payment.html"><button style="float:right">Payer</button></a>
         <div id="containerImage">
+            <div id="cadre">
+                <img src="https://assets.probikeshop.fr/images/products2/204/231369/380x380-231369_16219496754484.jpg">
+                <div id="roueG">
+                    <img src="https://assets.probikeshop.fr/images/products2/263/193169/380x380-193169_15820148070343.jpg">
+                </div>
+                <div id="roueD">
+                    <img src="https://assets.probikeshop.fr/images/products2/263/193169/380x380-193169_15820148070343.jpg">
+                </div>
+                <div id="guidon">
+                    <img src="https://assets.probikeshop.fr/images/products2/252/122154/380x380-122154-guidon-rant-1024x560-main.jpg">
+                </div>
+                <div id="plateau">
+                    <img src="https://assets.probikeshop.fr/images/products2/216/99965/380x380-99965-pb112516-1.jpg">
+                </div>
+                <div id="selle">
+                    <img src="https://assets.probikeshop.fr/images/products2/216/70463/380x380-70463-aitken-black-railed.jpg">
+                </div>
+            </div>
         </div>
     </div>
 

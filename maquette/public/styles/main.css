@@ -183,7 +183,7 @@ button{
     position:relative;
     margin:auto;
 
-    height: 300px;
+    height: 500px;
     width: 80%;
 
     border:solid 2px red;
@@ -196,12 +196,72 @@ button{
     margin:5px;
 }
 
+#cadre{
+    position:relative;
+    margin:auto;
+    height: 250px;
+    width: 250px;
+    top:100px;
+}
+
+#guidon{
+    position:absolute;
+    z-index: -1;
+    left:180px;
+    height: 250px;
+    width: 250px;
+    top:-100px;
+}
+
+#roueG{
+    position:absolute;
+    z-index: -1;
+    left:-180px;
+    height: 250px;
+    width: 250px;
+    top:100px;
+}
+
+#roueD{
+    position:absolute;
+    z-index: -1;
+    left:180px;
+    height: 250px;
+    width: 250px;
+    top:100px;
+}
+
+#selle{
+    position:absolute;
+    height: 150px;
+    width: 150px;
+    left:30px;
+    top:-40px;
+}
+
+#selle img{
+    max-width:70%;
+    max-height:70%;
+}
+
+#plateau{
+    position:absolute;
+    height: 150px;
+    width: 150px;
+    left:60px;
+    top:110px;
+}
+
+#plateau img{
+    max-width:30%;
+    max-height:30%;
+}
+
 #containerImage{
     margin:auto;
     margin-top:15px;
     height: 80%;
     width: 85%;
-
 }
 
 #containerImage img{

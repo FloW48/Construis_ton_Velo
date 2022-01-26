@@ -9,5 +9,6 @@ Packages à installer:
 - npm install node-fetch@2.6.1 --save
 - npm install body-parser --save
 - npm install mongoose --save
+- npm install socket.io --save
 
 Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'

@@ -17,8 +17,7 @@ function getTotalPrice(){
 
 
 document.addEventListener("DOMContentLoaded", async function () {
-    var equipement = await fetch("http://localhost:8080/api/equipement");    
-    var data = await equipement.json();
+    let socket = io.connect();
     
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
@@ -30,16 +29,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
     function displayImages(){
-        let containerImage=document.getElementById("containerImage")
-        containerImage.innerHTML="";
+        let cadre=document.getElementById("cadre")
+        let roueG=document.getElementById("roueG")
+        let roueD=document.getElementById("roueD")
+        let guidon=document.getElementById("guidon")
+        let plateau=document.getElementById("plateau")
+        let selle=document.getElementById("selle")
 
-        let img
-    
-        pieces_selectionnees.forEach(function (element){
-            img=document.createElement("img")
-            img.src=element.image;
-            containerImage.appendChild(img)
-        })
+
+        let img=cadre.firstElementChild
+        img.src=pieces_selectionnees[0].image;
+
+        img=roueG.firstElementChild
+        img.src=pieces_selectionnees[1].image;
+        
+        img=roueD.firstElementChild
+        img.src=pieces_selectionnees[1].image;
+        
+        img=guidon.firstElementChild
+        img.src=pieces_selectionnees[2].image;
+        
+        img=plateau.firstElementChild
+        img.src=pieces_selectionnees[3].image;
+        
+        img=selle.firstElementChild
+        img.src=pieces_selectionnees[4].image;
+
         
     }
 
@@ -88,7 +103,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             let piecePopup = document.createElement("div");
             piecePopup.className="piecePopup";
 
-            console.log(element)
             var data_idarticle = document.createAttribute("data-idarticle");
             data_idarticle.value = element._id;
             piecePopup.setAttributeNode(data_idarticle);
@@ -121,7 +135,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 displayImages()
                 prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
-
+                localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
             });
             
             if( pieces_selectionnees[idpiece-1]!=undefined && pieces_selectionnees[idpiece-1]._id == element._id){
@@ -288,7 +302,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         displayImages()
         prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
-
+        localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
     }
 
     //Import de données préfaites
@@ -296,4 +310,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         fetch('http://localhost:8080/importDataPreset')
     }
 
+    //Charge les données du Local storage
+    function load(){
+        if(JSON.parse(localStorage.getItem("savePieces"))!=null){
+            pieces_selectionnees=JSON.parse(localStorage.getItem("savePieces"));
+            for (let i=1;i<=5;i++){
+                showCurrentPiece(i)
+            }
+            displayImages()
+        }
+    }
+    load()
 });

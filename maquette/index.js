@@ -23,6 +23,7 @@ const URLSelles2 = "https://www.alltricks.fr/C-45868-selles.html";
 
 
 const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 
 const EquipementRoute = require('./database/equipementRoute')
 
@@ -285,5 +286,9 @@ async function scrapAll(){
     //scrapeElements2(URLPlateaux2,4);
     //scrapeElements2(URLSelles2,5);
 }
+
+io.on('connection', function (socket) {
+    console.log("Un client s'est connecté");
+})
 
 scrapAll();
