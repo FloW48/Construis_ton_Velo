@@ -1,0 +1,19 @@
+PROCHAINE REUNION: Mercredi 19 Janvier à 11h15
+
+- Clarifier les termes utilisés
+- (scrapping des prix) pour enlever le € après les chiffres: le faire avec une fonction JS après la regex
+- Faire des séries de tests pour voir les bugs de scrapping
+- Affichage vélo:
+	V1: Juste les images côtes à côtes
+	V2: Les disposer à peu près comme un vrai vélo (utiliser le cadre comme point d'origine)
+	V3: Contouring (enlever les fonds blancs)
+
+
+
+- Scrapping images
+- Faire un README
+- V1 affichage vélo
+- Optimiser BD
+- Regarder l'option d'export de projet sur VSC
+- Fonctions admins
+- Ne pas passer trop de temps sur le CSS

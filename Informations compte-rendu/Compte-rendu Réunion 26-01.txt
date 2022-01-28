@@ -1,0 +1,9 @@
+PROCHAINE REUNION: Mardi 1er Février à 16h45
+
+- Supprimer fond blanc des images (contouring)
+	-> Soit faire un outil,
+	-> Soit en utiliser un existant
+
+- Problème des images encodées: utiliser une image par défaut (avec un texte 'Image Non Trouvée')
+
+- Décider des sections du rapport écrit

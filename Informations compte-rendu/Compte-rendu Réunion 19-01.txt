@@ -1,0 +1,8 @@
+PROCHAINE REUNION: Mercredi 26 Janvier à 11h15
+
+- Carbone: Voir la localisation géographique des marques, et associé chaque marque à une valeur
+- Boutons pour optimiser pièces par prix, et un par carbone
+- Bouton sauvegarder: Générer fichier PDF résumant les pièces choisies
+- localStorage
+- Plusieurs (au moins 2) site pour scrapping
+- Schéma conceptuel des données

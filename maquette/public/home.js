@@ -2,16 +2,22 @@ var pieces_selectionnees=new Array(5)
 var prixTotal=0
 
 
-function getTotalPrice(){
+function updatePrice(){
     let total=0;
     pieces_selectionnees.forEach(function (element){
-        if(element.id_partie==2){   //Cas du pneu: Lot de 2 donc prix * 2 
-            total+=element.prix*2;
-        }else{
-            total+=element.prix;
+        if(element!=undefined){
+            if(element.id_partie==2){   //Cas du pneu: Lot de 2 donc prix * 2 
+                total+=element.prix*2;
+            }else{
+                total+=element.prix;
+            }
         }
     })
-    return total;
+    let prixTotal= Math.round(total * 100) / 100;
+
+    let prixTotalDisplay=document.getElementById("prixTotal")
+    prixTotalDisplay.innerHTML="Prix total: "+prixTotal+"€"
+
 }
 
 
@@ -19,15 +25,29 @@ function getTotalPrice(){
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
     
+    //Charge les données du Local storage
+    function load(){
+        if(JSON.parse(localStorage.getItem("savePieces"))!=null){
+            pieces_selectionnees=JSON.parse(localStorage.getItem("savePieces"));
+            for (let i=1;i<=5;i++){
+                if(pieces_selectionnees[i-1]!=undefined){
+                    showCurrentPiece(i)
+                }
+                
+            }
+            displayImages()
+        }
+    }
+    load()
+
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
     var elements_showPieces = document.getElementsByClassName("showPiece");
     var importDataPreset = document.getElementById("importDataPreset");
 
-    let prixTotalDisplay=document.getElementById("prixTotal")
-    prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+    updatePrice()
 
-
+    //Affiche le vélo en bas de page
     function displayImages(){
         let cadre=document.getElementById("cadre")
         let roueG=document.getElementById("roueG")
@@ -38,23 +58,46 @@ document.addEventListener("DOMContentLoaded", async function () {
 
 
         let img=cadre.firstElementChild
-        img.src=pieces_selectionnees[0].image;
+        if(pieces_selectionnees[0]!=undefined){
+            img.src=pieces_selectionnees[0].image;
+        }else{
+            img.src="./images/site/empty.png"
+        }
+        
+        
 
         img=roueG.firstElementChild
-        img.src=pieces_selectionnees[1].image;
+        if(pieces_selectionnees[1]!=undefined){
+            img.src=pieces_selectionnees[1].image;
+            img=roueD.firstElementChild
+            img.src=pieces_selectionnees[1].image;
+        }else{
+            img.src="./images/site/empty.png"
+            img=roueD.firstElementChild
+            img.src="./images/site/empty.png";
+        }
         
-        img=roueD.firstElementChild
-        img.src=pieces_selectionnees[1].image;
         
         img=guidon.firstElementChild
-        img.src=pieces_selectionnees[2].image;
-        
+        if(pieces_selectionnees[2]!=undefined){
+            img.src=pieces_selectionnees[2].image;
+        }else{
+            img.src="./images/site/empty.png"
+        }
+
         img=plateau.firstElementChild
-        img.src=pieces_selectionnees[3].image;
+        if(pieces_selectionnees[3]!=undefined){
+            img.src=pieces_selectionnees[3].image;
+        }else{
+            img.src="./images/site/empty.png"
+        }
         
         img=selle.firstElementChild
-        img.src=pieces_selectionnees[4].image;
-
+        if(pieces_selectionnees[4]!=undefined){
+            img.src=pieces_selectionnees[4].image;
+        }else{
+            img.src="./images/site/empty.png"
+        }
         
     }
 
@@ -275,6 +318,20 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
 
+    let delPieces=document.getElementsByClassName("delPiece")
+    for (var i = 0; i < 5; i++) {
+        delPieces[i].addEventListener('click', function(){
+            idpiece=this.getAttribute("data-idpiece")
+            let showPiece=document.getElementsByClassName("showPiece")[idpiece-1]
+            showPiece.innerHTML="<div class=\"pieceSelected\"><h1>Sélectionner une pièce</h1></div>"
+
+            pieces_selectionnees[idpiece-1]=undefined;
+            displayImages()
+            updatePrice()
+            localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
+        });
+    }
+
     let optPrix = document.getElementById("optPrix");
     optPrix.onclick = async function(){
         var fetch_url;
@@ -301,7 +358,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         displayImages()
-        prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+        updatePrice()
         localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
     }
 
@@ -310,15 +367,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         fetch('http://localhost:8080/importDataPreset')
     }
 
-    //Charge les données du Local storage
-    function load(){
-        if(JSON.parse(localStorage.getItem("savePieces"))!=null){
-            pieces_selectionnees=JSON.parse(localStorage.getItem("savePieces"));
-            for (let i=1;i<=5;i++){
-                showCurrentPiece(i)
-            }
-            displayImages()
-        }
-    }
+    
     load()
 });
