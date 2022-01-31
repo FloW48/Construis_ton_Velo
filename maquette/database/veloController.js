@@ -34,7 +34,11 @@ const showVelo = (req, res, next) => {
 const newVelo = (req, res, next) => {
     let velo = new Velo({
         _id: req.body._id, 
-        id_equipements: req.body.id_equipements,
+        id_cadre: req.body.id_cadre,
+        id_guidon: req.body.id_guidon,
+        id_pneus: req.body.id_pneus,
+        id_plateau: req.body.id_plateau,
+        id_selle: req.body.id_selle,
         nom: req.body.nom,
         prix: req.body.prix
     })
@@ -65,4 +69,29 @@ const deleteAll  = (req, res, next) => {
     })
 }
 
-module.exports = {showAll, showVelo, newVelo, deleteAll}
+const updateVelo = (req, res , next) => {
+    let veloID = req.body.veloID
+
+    let updatedData = {
+        id_cadre: req.body.id_cadre,
+        id_guidon: req.body.id_guidon,
+        id_pneus: req.body.id_pneus,
+        id_plateau: req.body.id_plateau,
+        id_selle: req.body.id_selle,
+        nom: req.body.nom,
+        prix: req.body.prix
+    }
+
+    Velo.findByIdAndUpdate(veloID, {$set: updatedData}).then(()=>{
+        res.json({
+            message: "Velo updated successfully"
+        })
+    }).catch(()=>{
+        res.json({
+            message: "Error on update"
+        })
+    })
+
+}
+
+module.exports = {showAll, showVelo, newVelo, deleteAll, updateVelo}

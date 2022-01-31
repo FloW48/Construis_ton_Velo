@@ -1,12 +1,10 @@
 const express=require('express')
 const router = express.Router()
-const EquipementController = require('./veloController')
+const VeloController = require('./veloController')
 
-router.get('/',EquipementController.showAll)
-router.get('/showPieces',EquipementController.showPieces)
-router.post('/newEquipement',EquipementController.newEquipement)
-router.get('/deleteAll',EquipementController.deleteAll)
-router.get('/findMinPrice',EquipementController.findMinPrice)
-
+router.get('/',VeloController.showAll)
+router.get('/showPieces',VeloController.showVelo)
+router.post('/newEquipement',VeloController.newVelo)
+router.get('/deleteAll',VeloController.deleteAll)
 
 module.exports = router 
