@@ -4,7 +4,8 @@
 var express = require('express')
 var bodyParser = require('body-parser') //Règle probleme de req.body = undefined lors de l'envoi d'une requete POST
 const puppeteer = require('puppeteer');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
+const jspdf = require('jspdf');
 
 var app = express();
 
@@ -287,8 +288,76 @@ async function scrapAll(){
     //scrapeElements2(URLSelles2,5);
 }
 
+var getImageFromUrl = function(url, callback) {
+	var img = new Image();
+	img.src = url;
+	img.onError = function() {
+		throw new Error('Cannot load image: "'+url+'"');
+	}
+	img.onload = function() {
+		var canvas = document.createElement('canvas');
+		document.body.appendChild(canvas);
+		canvas.width = img.width;
+		canvas.height = img.height;
+
+		var ctx = canvas.getContext('2d');
+		ctx.drawImage(img, 0, 0);
+		// Grab the image as a jpeg encoded in base64, but only the data
+		data = canvas.toDataURL('image/jpeg').slice('data:image/jpeg;base64,'.length);
+		// Convert the data to binary form
+		data = atob(data)
+		document.body.removeChild(canvas);
+
+		ret['data'] = data;
+		ret['pending'] = false;
+		if (typeof callback === 'function') {
+			callback(data);
+		}
+	}
+
+	return ret;
+}
+
+var createImagePDF = function (doc,imgData){
+    doc.addImage(imgData,'JPEG',70,10,100,120);
+    doc.output('datauri');
+}
+
 io.on('connection', function (socket) {
     console.log("Un client s'est connecté");
+
+
+    socket.on("changePiece",()=>{
+        console.log("update reçu");
+    });
+
+    socket.on("sauvegarder", (velo)=> {
+        let doc = new jspdf.jsPDF();
+        doc.setProperties({
+            title: 'Votre vélo',
+            subject: 'Eléments de votre vélo',		
+            author: 'Paul Prenant, Tanguy Crussard',
+            keywords: 'generated, javascript, web 2.0, ajax',
+        });
+        for(let i = 0;i<5;i++){
+            if(i!==0) doc.addPage();
+            let nom = velo[i].nom;
+            let prix = velo[i].prix;
+            let lien = velo[i].lien;
+            let url = velo[i].image;
+            doc.setFontSize(15);
+            doc.setTextColor("black");
+            doc.text(nom,10,10);
+            doc.setTextColor(255,0,0);
+            doc.setFontSize(16);
+            doc.text(String(prix),100,50);
+            doc.setTextColor(100);
+            doc.setFontSize(10)
+            doc.text(lien,15,275);
+            //getImageFromUrl(doc,url,createImagePDF);
+        }
+        doc.save("Votre vélo.pdf");
+    });
 })
 
 scrapAll();
