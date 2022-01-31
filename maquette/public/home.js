@@ -24,6 +24,24 @@ function updatePrice(){
 
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
+
+    let saveButton = document.getElementById("saveButton");
+    saveButton.addEventListener("click", ()=>{
+        if(document.getElementById("containerImage").children.length === 1 && document.getElementById("cadre").children.length === 6){
+            let velo = [];
+            let savePieces = JSON.parse(localStorage.getItem("savePieces"));
+            for(let elem of savePieces){
+                delete elem['_id'];
+                delete elem['id_partie'];
+                delete elem['carbone'];
+                
+                velo.push(elem);
+            }
+            socket.emit("sauvegarder", velo);
+        }else{
+            alert("Il vous faut un vélo complet pour le sauvegarder");
+        }
+    })
     
     //Charge les données du Local storage
     function load(){
@@ -168,6 +186,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     let idarticle_curr=pieces_selectionnees[idpiece-1]._id;
                     let article_curr = document.querySelector("[data-idarticle='"+idarticle_curr+"']")
                     article_curr.classList.remove("selected")
+                    updatePrice();
                 }
 
                 piecePopup.classList.add("selected");       //Ajout du style 'selected' à l'article choisi
@@ -177,7 +196,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 showCurrentPiece(idpiece);
 
                 displayImages()
-                prixTotalDisplay.innerHTML="Prix total: "+getTotalPrice()+"€"
+                updatePrice()
                 localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
             });
             
@@ -329,6 +348,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             displayImages()
             updatePrice()
             localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
+            socket.emit("changePiece",()=>{
+                console.log("Update émis");
+            });
         });
     }
 
