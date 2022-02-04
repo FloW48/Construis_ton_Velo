@@ -180,16 +180,20 @@ document.addEventListener("DOMContentLoaded", async function () {
                     carbone: element.carbone
                 };
 
+                /*
                 
                 //Enlever le style 'selected' à l'article précedemment choisi si il existe
                 if(pieces_selectionnees[idpiece-1] != undefined){
                     let idarticle_curr=pieces_selectionnees[idpiece-1]._id;
+                    console.log(idarticle_curr)
                     let article_curr = document.querySelector("[data-idarticle='"+idarticle_curr+"']")
                     article_curr.classList.remove("selected")
                     updatePrice();
                 }
 
                 piecePopup.classList.add("selected");       //Ajout du style 'selected' à l'article choisi
+
+                */
 
                 pieces_selectionnees[idpiece-1]=piece; //Sauvegarde l'article en tant que l'article choisi
 
@@ -200,9 +204,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
             });
             
+            /*
             if( pieces_selectionnees[idpiece-1]!=undefined && pieces_selectionnees[idpiece-1]._id == element._id){
                 piecePopup.classList.add("selected");
-            }
+            }*/
 
             //NOM PIECE
             let nom_article=document.createElement("h1");

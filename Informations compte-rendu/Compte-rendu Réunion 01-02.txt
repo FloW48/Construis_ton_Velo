@@ -1,0 +1,16 @@
+PROCHAINE REUNION: Mardi 8 Février à 10h
+
+- PDF: -Faire un tableau recapitulatif
+     -Ajouter des informations: Type de vélo, date de création, prix global, numéro unique de commande
+     -Nom du fichier PDF unique: DATE + ID par exemple
+     -Utiliser socket pour envoyer le PDF du serveur au client
+     -Bouton 'sauvegarde': téléchargement de fichier, donc s'enregistre à l'exterieur du serveur
+
+- Rendre le site + professionnel: Utiliser JSX (support tablette/mobile etc.) et TypeScript (sécurité)
+
+- Moins de code en dure (ex: "localhost")
+- Plus (+) de chemins relatifs
+
+Commencer le rapport au maximum fin Février début Mars
+
+Perspective possible (pour le rapport) : Généralisation scrapping (adaptation auto entre différents sites)

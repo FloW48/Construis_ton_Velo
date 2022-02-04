@@ -10,5 +10,7 @@ Packages à installer:
 - npm install body-parser --save
 - npm install mongoose --save
 - npm install socket.io --save
+- npm install jspdf --save
+
 
 Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'

@@ -15,11 +15,11 @@ const URLGuidons = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques
 const URLPlateaux = "https://www.probikeshop.fr/bmx/bmx-street-dirt-transmission-plateaux-c3297.html";
 const URLSelles = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-selles-c3274.html";
 
-const URLCadres2 ="https://www.alltricks.fr/C-41254-cadres?_gl=1*1qibc9t*_up*MQ..&gclid=Cj0KCQiAraSPBhDuARIsAM3Js4qVJ1tXvoEbQAaWKPbF69pAEMCetqMPuFkdOfIL7C_Cf-7RWaCuuZ4aAsvZEALw_wcB.html";
-const URLPneus2 = "https://www.alltricks.fr/C-41273-pneus.html";
-const URLGuidons2 = "https://www.alltricks.fr/C-41257-guidons.html";
-const URLPlateaux2 = "https://www.alltricks.fr/C-41263-plateaux";
-const URLSelles2 = "https://www.alltricks.fr/C-45868-selles.html";
+const URLCadres2 ="https://www.bmxavenue.com/cadres-fourches-freestyle/cadres/"
+const URLPneus2 = "https://www.bmxavenue.com/pneus-freestyle/pneus-rigides/"
+const URLGuidons2 = "https://www.bmxavenue.com/cadres-fourches-freestyle/guidons/";
+const URLPlateaux2 = "https://www.bmxavenue.com/transmissions-freestyle/couronnes-1/";
+const URLSelles2 = "https://www.bmxavenue.com/selles-tiges-freestyle/selles-pivotal/";
 
 
 
@@ -93,109 +93,66 @@ app.get('/importDataPreset', async function(req, res) {
 
 
 var index=0;    //ID pour les éléménts de la BD
-async function scrapeElements2(url, id_partie){
+async function scrapeElements2(url,id_partie){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
     await page.setDefaultNavigationTimeout(0);
-    await page.goto(url);
-    
+    await page.goto(url)
 
-    //Scrapping des prix
+    //Scrapping prix
     let prixTable = [];
     prixTable = await page.evaluate(() => {
-
-        let produits = document.querySelectorAll(".alltricks-Product--3columns")
-        let produitsPrix=[]
-        produits.forEach(function (produit){
-            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
-                produitsPrix.push(produit.getElementsByClassName("alltricks-Product-actualPrice")[0].children[0].textContent)
-            }
-        })
-        
-        
-        return produitsPrix;
-
+        return Array.from(document.querySelectorAll(".prod__price__cur")).map(x => x.firstElementChild.textContent.slice(0, -1).replace(/,/g, "."));
     });
-    prixTable = prixTable.map(function (el) {
-        return el.trim().split(/[0-9]{1-5},[0-9]{2}/);
-    });
-    for(let i =0; i <prixTable.length; i++){
-        prixTable[i][0] = prixTable[i][0].replace(/,/g, ".");
-        if(prixTable[i][0].includes('-')){
-            prixTable[i] = prixTable[i][0].substring(32,38);
-        }
-        if(prixTable[i][0].includes('€')){
-            prixTable[i] = prixTable[i][0].substring(0,6);
-        }
-    }
-    for(let i=0; i<prixTable.length; i++){
-        prixTable[i] = parseFloat(prixTable[i]);
-    }
+    //console.log(prixTable);
 
-    console.log(prixTable);
-
-    //Scrapping des images
-    let imagesTable = [];
-    imagesTable = await page.evaluate(() => {
-        setInterval(5000)
-        let produits = document.querySelectorAll(".alltricks-Product--3columns")
-        let produitsImages=[]
-        produits.forEach(function (produit){
-            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
-                produitsImages.push(produit.getElementsByClassName("alltricks-Product-picture")[0].children[0].getAttribute("src"))
-            }
-        })
-        
-        return produitsImages;
-    });
-    console.log(imagesTable);
 
     //Scrapping des noms
     let nomsTable = [];
     nomsTable = await page.evaluate(() => {
-        let produits = document.querySelectorAll(".alltricks-Product--3columns")
-        let produitsNoms=[]
-        produits.forEach(function (produit){
-            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
-                produitsNoms.push(produit.getElementsByClassName("alltricks-Product-description")[0].innerHTML.trim())
-            }
-        })
-        
-        return produitsNoms;
+        return Array.from(document.querySelectorAll(".prod__name__title")).map(x => x.innerHTML);
     });
-    console.log(nomsTable);
-   
+    //console.log(nomsTable);
+
+    //Scrapping des images
+    let imagesTable = [];
+    imagesTable = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll(".prod__picture")).map(x => x.lastElementChild.getAttribute("data-src"));
+    });
+    //console.log(imagesTable);
+
     //Scrapping des liens
     let liensTable = [];
     liensTable = await page.evaluate(() => {
-        let produits = document.querySelectorAll(".alltricks-Product--3columns")
-        let produitsLiens=[]
-        produits.forEach(function (produit){
-            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
-                produitsLiens.push("https://www.alltricks.fr/" +produit.getElementsByTagName("a")[0].getAttribute("href"))
-            }
-        })
-        
-        return produitsLiens;
+        return Array.from(document.querySelectorAll(".prod__relative")).map(x => "https://www.bmxavenue.com" + x.firstElementChild.children[4].getAttribute("href"));
     });
-    console.log(liensTable);
+    //console.log(liensTable);
 
-    //Scrapping des marques 
-    let marquesTable = [];
-    marquesTable = await page.evaluate(() => {
-        let produits = document.querySelectorAll(".alltricks-Product--3columns")
-        let produitsMarques=[]
-        produits.forEach(function (produit){
-            if(produit.parentElement.className!="RecommendedProduct-ChildSelector-wrapper"){
-                produitsMarques.push(produit.getElementsByClassName("alltricks-Product-brandLabel")[0].textContent.trim())
-            }
-        })
+
+    await browser.close()
+    
+    let nb_elem=imagesTable.length;
+    
+
+    for(let i=0;i<nb_elem;i++){
+        let piece = {
+            _id: index,
+            id_partie: id_partie,
+            nom: nomsTable[i],
+            prix: prixTable[i],
+            lien: liensTable[i],
+            image: imagesTable[i],
+            carbone: 50
+        };
         
-        return produitsMarques;
-    });
-
-    console.log(marquesTable);
-    await browser.close();
+        fetch('http://localhost:8080/api/equipement/newEquipement', {
+            method: 'POST',
+            body: JSON.stringify(piece),
+            headers: { 'Content-Type': 'application/json' }
+        }).then(res => res.json())
+          .then(json => console.log(json));
+          index++;
+    }
 }
 
 async function scrapeElements(url, id_partie){
@@ -276,16 +233,18 @@ async function scrapeElements(url, id_partie){
 
 async function scrapAll(){
     await fetch('http://localhost:8080/api/equipement/deleteAll');  //Supprime tous les éléments présents dans la collection 'Equipement'
-    scrapeElements(URLCadres,1);
-    scrapeElements(URLPneus,2);
-    scrapeElements(URLGuidons,3);
-    scrapeElements(URLPlateaux,4);
-    scrapeElements(URLSelles,5);
-    scrapeElements2(URLCadres2,1);
-    //scrapeElements2(URLPneus2,2);
-    //scrapeElements2(URLGuidons2,3);
-    //scrapeElements2(URLPlateaux2,4);
-    //scrapeElements2(URLSelles2,5);
+    await scrapeElements(URLCadres,1);
+    await scrapeElements(URLPneus,2);
+    await scrapeElements(URLGuidons,3);
+    await scrapeElements(URLPlateaux,4);
+    await scrapeElements(URLSelles,5);
+    await scrapeElements2(URLCadres2,1);
+    await scrapeElements2(URLPneus2,2);
+    await scrapeElements2(URLGuidons2,3);
+    await scrapeElements2(URLPlateaux2,4);
+    await scrapeElements2(URLSelles2,5);
+
+    console.log("Scrapping: OK")
 }
 
 var getImageFromUrl = function(url, callback) {
@@ -360,4 +319,4 @@ io.on('connection', function (socket) {
     });
 })
 
-scrapAll();
+scrapAll()
