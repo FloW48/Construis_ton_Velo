@@ -11,6 +11,9 @@ Packages à installer:
 - npm install mongoose --save
 - npm install socket.io --save
 - npm install jspdf --save
+- npm install jsonwebtoken --save
+- npm install bcryptjs --save
+- npm install express-validator --save
 
 
 Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'

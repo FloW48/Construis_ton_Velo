@@ -16,16 +16,23 @@
         <a href="myBikes.html">
             <button style="float:right;">Mes vélos (apparaît si connecté)</button>
         </a>
+        <a href="enregistrement.html">
+            <button style="float:right;">S'enregistrer</button>
+        </a>
         <a href="connexion.html">
             <button style="float:right;">Se connecter</button>
         </a>
         <a href="ajout_db_temp.html">
-            <button style="float:right;">AJOUT DONNÉES (temporaire)</button>
+            <button disabled style="float:right;">AJOUT DONNÉES (temporaire)</button>
         </a>
         <button disabled style="float:right;" id="importDataPreset">IMPORTER DONNÉES (temporaire)</button>
     </div>
 
-
+    <h3>Original Image</h3>
+    <img id="imageid" src='https://assets.probikeshop.fr/images/products2/204/231369/380x380-231369_16219496754484.jpg'/>
+    
+    <h3>Modified Image</h3>
+    <canvas id="canvas"></canvas>
     <div class="monVeloInfos">
         <div class="titreSection">INFOS VELO</div>
         <table>

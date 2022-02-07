@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <script src="../index.js"></script>
-    <title>Connexion</title>
+    <title>Enregistrement</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 <body>
@@ -13,13 +13,17 @@
         </a>
     </div>
     <div class="monVeloImage">
-        <div class="titreSection">CONNEXION</div>
+        <div class="titreSection">ENREGISTREMENT</div>
         <div style="text-align: center; margin-top:50px">
-            <form action="./api/utilisateur/loginUtilisateur" method="post">
+            <form action="./api/utilisateur/registerUtilisateur" method="post">
                 <table>
                     <tr>
                         <td>Nom utilisateur :</td>
                         <td><input type="text" id="nom" name="nom"></td>
+                    </tr>
+                    <tr>
+                        <td><label for="email">Adresse e-mail :</label></td>
+                        <td><input type="email" id="email" name="email"></td>
                     </tr>
                     <tr>
                         <td>Mot De Passe :</td>
@@ -27,9 +31,10 @@
                     </tr>
                 </table>
                 <button disabled>Mot de passe oublié</button><br>
-                <input type="submit" value="Se connecter">
+                <input type="submit" value="S'enregistrer">
               </form>
-              <h1>Cliquez <a href="enregistrement.html">ici</a> pour créer un compte</h1>
+              <h1>Cliquez <a href="connexion.html">ici</a> pour vous connecter</h1>
+
         </div>
     </div>
 </body>

@@ -1,0 +1,18 @@
+const jwt = require("jsonwebtoken");
+
+module.exports = function(req, res, next) {
+  const token = req.header("token");
+
+  console.log(JSON.stringify(req.headers))
+
+  if (!token) return res.status(401).json({ message: "Erreur authentification" });
+
+  try {
+    const decoded = jwt.verify(token, "randomString");
+    req.user = decoded.user;
+    next();
+  } catch (e) {
+    console.error(e);
+    res.send({ message: "Token invalide" });
+  }
+};
