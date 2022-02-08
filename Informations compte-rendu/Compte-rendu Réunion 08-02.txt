@@ -28,3 +28,5 @@ Pour les différentes étapes du projet: (de 2 à 4)
 
 -Fichier résumé PDF amélioré
 -Avancement dans contourage des images, conversion en forme encodée base64 faite
+-Problème token d'identification lors de la connexion d'un utilisateur
+ ->Si trop compliqué à corriger, opter pour un système d'authentification simple (mais non sécurisé)
