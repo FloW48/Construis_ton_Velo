@@ -17,3 +17,5 @@ Packages à installer:
 
 
 Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'
+
+Pour lancer le scrapping: Bouton 'Lancer Scrapping' en haut à droite, puis lorsque c'est terminé, affichage du message 'scrapping terminé' dans la console du navigateur web

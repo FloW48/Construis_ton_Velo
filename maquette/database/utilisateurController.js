@@ -34,7 +34,6 @@ const showUtilisateur = (req, res) => {
 
 const showMe = async (req, res) => {
     try {
-        // request.user is getting fetched from Middleware after token authentication
         const user = await Utilisateur.findById(req.user.id);
         res.json(user);
     } catch (e) {

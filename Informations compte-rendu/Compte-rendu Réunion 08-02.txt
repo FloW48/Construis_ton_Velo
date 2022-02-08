@@ -1,0 +1,30 @@
+PROCHAINE REUNION: ----
+
+-Approfondissement plan rapport:
+
+1)INTRODUCTION
+ -Détails du projet
+
+2)SCRAPPING
+
+3)BD
+ -Intégration des données dans le site
+
+4)IHM
+ -Visualisation, PDF, images, optimisation (trier pièces par prix etc.)
+
+5)CONCLUSION
+
+Pour les différentes étapes du projet: (de 2 à 4)
+ -Objectif
+ -Explications
+ -Problèmes
+ -Solutions
+ -Rendu Final et améliorations possibles
+
+
+/!\ Éviter les anglicismes
+
+
+-Fichier résumé PDF amélioré
+-Avancement dans contourage des images, conversion en forme encodée base64 faite

@@ -5,6 +5,9 @@ var express = require('express')
 var bodyParser = require('body-parser') //Règle probleme de req.body = undefined lors de l'envoi d'une requete POST
 const puppeteer = require('puppeteer');
 const fetch = require('node-fetch');
+var FileReader = require('filereader')
+var http = require('http');
+var {Base64Encode} = require('base64-stream');
 const jspdf = require('jspdf');
 
 var app = express();
@@ -27,6 +30,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 const EquipementRoute = require('./database/equipementRoute')
+const UtilisateurRoute = require('./database/utilisateurRoute')
 
 server.listen(8080, function() {
     console.log("C'est parti ! En attente de connexion sur le port 8080...");
@@ -34,6 +38,12 @@ server.listen(8080, function() {
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
 
 // Configuration d'express pour utiliser le répertoire "public"
 app.use(express.static('public'));
@@ -43,10 +53,12 @@ app.get('/', function(req, res) {
 });
 
 app.use('/api/equipement',EquipementRoute);
+app.use('/api/utilisateur',UtilisateurRoute);
 
 //Import the mongoose module
 var mongoose = require('mongoose');
 const { setgroups } = require('process');
+const { isDeepStrictEqual } = require('util');
 
 mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
@@ -317,6 +329,12 @@ io.on('connection', function (socket) {
         }
         doc.save("Votre vélo.pdf");
     });
-})
 
-scrapAll()
+    socket.on("lancerScrapping", async ()=>{
+        console.log("lancerScrapping recu")
+        await scrapAll()
+        io.sockets.emit("scrappingOK")
+    })
+
+    
+})

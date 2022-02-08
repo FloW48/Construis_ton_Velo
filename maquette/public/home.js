@@ -394,6 +394,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         fetch('http://localhost:8080/importDataPreset')
     }
 
+    let buttonScrapping=document.getElementById("buttonScrapping")
+    buttonScrapping.onclick=function(){
+        socket.emit("lancerScrapping")
+    }
+
+    socket.on("scrappingOK",()=>{
+        console.log("scrapping terminé")
+    })
     
     load()
 });
