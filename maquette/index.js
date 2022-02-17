@@ -8,7 +8,18 @@ const fetch = require('node-fetch');
 var FileReader = require('filereader')
 var http = require('http');
 var {Base64Encode} = require('base64-stream');
-const jspdf = require('jspdf');
+const Pdfmake = require('pdfmake');
+var fs = require('fs');
+var fonts = {
+    Roboto: {
+        normal: 'fonts/roboto/Roboto-Regular.ttf',
+        bold: 'fonts/roboto/Roboto-Medium.ttf',
+        italics: 'fonts/roboto/Roboto-Italic.ttf',
+        bolditalics: 'fonts/roboto/Roboto-MediumItalic.ttf'
+    }
+};
+
+var pdfmake = new Pdfmake(fonts);
 
 var app = express();
 
@@ -259,41 +270,6 @@ async function scrapAll(){
     console.log("Scrapping: OK")
 }
 
-var getImageFromUrl = function(url, callback) {
-	var img = new Image();
-	img.src = url;
-	img.onError = function() {
-		throw new Error('Cannot load image: "'+url+'"');
-	}
-	img.onload = function() {
-		var canvas = document.createElement('canvas');
-		document.body.appendChild(canvas);
-		canvas.width = img.width;
-		canvas.height = img.height;
-
-		var ctx = canvas.getContext('2d');
-		ctx.drawImage(img, 0, 0);
-		// Grab the image as a jpeg encoded in base64, but only the data
-		data = canvas.toDataURL('image/jpeg').slice('data:image/jpeg;base64,'.length);
-		// Convert the data to binary form
-		data = atob(data)
-		document.body.removeChild(canvas);
-
-		ret['data'] = data;
-		ret['pending'] = false;
-		if (typeof callback === 'function') {
-			callback(data);
-		}
-	}
-
-	return ret;
-}
-
-var createImagePDF = function (doc,imgData){
-    doc.addImage(imgData,'JPEG',70,10,100,120);
-    doc.output('datauri');
-}
-
 io.on('connection', function (socket) {
     console.log("Un client s'est connecté");
 
@@ -303,31 +279,32 @@ io.on('connection', function (socket) {
     });
 
     socket.on("sauvegarder", (velo)=> {
-        let doc = new jspdf.jsPDF();
-        doc.setProperties({
-            title: 'Votre vélo',
-            subject: 'Eléments de votre vélo',		
-            author: 'Paul Prenant, Tanguy Crussard',
-            keywords: 'generated, javascript, web 2.0, ajax',
-        });
+        //const pdfDoc = new PDFDocument();
+        let info = [];
+        let total = 0;
         for(let i = 0;i<5;i++){
-            if(i!==0) doc.addPage();
             let nom = velo[i].nom;
-            let prix = velo[i].prix;
+            let prix = Math.round(velo[i].prix * 100) / 100;
+            if(i == 1) prix*=2;
+            total += prix;
             let lien = velo[i].lien;
-            let url = velo[i].image;
-            doc.setFontSize(15);
-            doc.setTextColor("black");
-            doc.text(nom,10,10);
-            doc.setTextColor(255,0,0);
-            doc.setFontSize(16);
-            doc.text(String(prix),100,50);
-            doc.setTextColor(100);
-            doc.setFontSize(10)
-            doc.text(lien,15,275);
-            //getImageFromUrl(doc,url,createImagePDF);
+            info.push({'nom':nom,'prix':prix,'lien':lien});
         }
-        doc.save("Votre vélo.pdf");
+        info.push(total);
+        /*var pdfDoc = pdfmake.createPdfKitDocument(doc,{});
+        pdfDoc.pipe(fs.createWriteStream('Votre vélo.pdf'));
+        pdfDoc.end();*/
+
+        makePDF({
+            data: info
+        }).then(file => {
+            console.log(file);
+        });
+
+        socket.emit("finPDF",(pdfDoc) =>{
+            console.log("PDF envoyé au client");
+        });
+        //pdfMake.createPdf(doc).download("Votre vélo.pdf");
     });
 
     socket.on("lancerScrapping", async ()=>{
@@ -343,9 +320,88 @@ io.on('connection', function (socket) {
         callback(base64)
     })
 
+    
+    const makePDF = (datas) => {
+        let aPromise = new Promise((resolve, reject) => {
+            console.time('creatingPDF')
+
+            /// all those stuffs
+            var doc = {
+                content: [
+                    { text : 'Nom du site',style: 'nosCoords'},
+                    { text : '16 route de Gray', style : 'nosCoords' },
+                    { text : '25000 Besançon', style : 'nosCoords'},
+        
+                    { text : 'Votre vélo #256',style: 'utilCoords'},
+                    { text: 'Robert Utilisateur', style : 'utilCoords'},
+                    { text : '10 Grande Rue', style : 'utilCoords' },
+                    { text : '70100 Gray', style : 'utilCoords'},
+                    { style: 'table',
+                        table: {
+                            heights: [10, 30, 30,30,30,30,30],
+                            widths: [200, 250, 50,50],
+                            body: [
+                                [{text:'Nom', style:'tableHeader'}, {text:'Lien', style:'tableHeader'}, {text:'Prix Unité', style:'tableHeader'}],
+                                [datas.data[0].nom, datas.data[0].lien, datas.data[0].prix],
+                                [datas.data[1].nom, datas.data[1].lien, datas.data[1].prix],
+                                [datas.data[2].nom, datas.data[2].lien, datas.data[2].prix],
+                                [datas.data[3].nom, datas.data[3].lien, datas.data[3].prix],
+                                [datas.data[4].nom, datas.data[4].lien, datas.data[4].prix],
+                                [{text:'Total', style:'tableHeader'},'',{fillColor: 'red', text: Math.round(datas.data[5] * 100) / 100+'\u20AC'}]
+                            ],
+                        },
+                    },
+                    /*{ image: 'sampleImage.jpg',
+                        width: 150,
+                        height: 150,
+                        alignment : 'center',
+                        margin: [0,110,0,150]
+                    }*/
+                ],
+                styles: {
+                   nosCoords: {
+                        italic: true,
+                        fontSize: 13,
+                        alignment: 'right',
+                        margin :1
+                    },
+                    utilCoords: {
+                        fontSize: 15,
+                        bold: true,
+                        alignment: 'left',
+                        margin: 2
+                    },
+                    table: {
+                        margin: [0, 50, 0, 15]
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 13,
+                        color: 'black',
+                        alignment : 'center'
+                    }
+                },
+            };
 
 
+            let pdfDoc = pdfmake.createPdfKitDocument(doc, {});
+
+            let writeStream = fs.createWriteStream('Votre vélo.pdf');
+
+            pdfDoc.pipe(writeStream);
+            pdfDoc.end();
+
+            writeStream.on('finish', function () {
+                console.timeEnd('creatingPDF');
+                resolve('Votre vélo.pdf');
+            });
+
+        })
+
+        return aPromise;
+    }
 
 
     
 })
+
