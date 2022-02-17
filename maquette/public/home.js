@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     let saveButton = document.getElementById("saveButton");
     saveButton.addEventListener("click", ()=>{
-        if(document.getElementById("containerImage").children.length === 1 && document.getElementById("cadre").children.length === 6){
+        if(document.getElementById("containerImage").children.length === 6){    //Corriger la vérification du vélo complet
             let velo = [];
             let savePieces = JSON.parse(localStorage.getItem("savePieces"));
             for(let elem of savePieces){
