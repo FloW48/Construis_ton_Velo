@@ -336,5 +336,16 @@ io.on('connection', function (socket) {
         io.sockets.emit("scrappingOK")
     })
 
+
+    //Renvoi au client la valeur encodée d'une image jpg en base64
+    socket.on("askImgBase64",async function(image, callback){
+        let base64=await fetch(image).then(r => r.buffer()).then(buf => `data:image/${"jpg"};base64,`+buf.toString('base64'));
+        callback(base64)
+    })
+
+
+
+
+
     
 })

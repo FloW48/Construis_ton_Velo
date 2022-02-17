@@ -1,7 +1,6 @@
 var pieces_selectionnees=new Array(5)
 var prixTotal=0
 
-
 function updatePrice(){
     let total=0;
     pieces_selectionnees.forEach(function (element){
@@ -66,7 +65,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     updatePrice()
 
     //Affiche le vélo en bas de page
-    function displayImages(){
+    async function displayImages(){
         let cadre=document.getElementById("cadre")
         let roueG=document.getElementById("roueG")
         let roueD=document.getElementById("roueD")
@@ -77,7 +76,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         let img=cadre.firstElementChild
         if(pieces_selectionnees[0]!=undefined){
-            img.src=pieces_selectionnees[0].image;
+            socket.emit("askImgBase64",pieces_selectionnees[0].image,function(imageBase64){                
+                displayImageContouring("cadre",imageBase64)
+            })
         }else{
             img.src="./images/site/empty.png"
         }
@@ -86,9 +87,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         img=roueG.firstElementChild
         if(pieces_selectionnees[1]!=undefined){
-            img.src=pieces_selectionnees[1].image;
-            img=roueD.firstElementChild
-            img.src=pieces_selectionnees[1].image;
+            socket.emit("askImgBase64",pieces_selectionnees[1].image,function(imageBase64){                
+                displayImageContouring("roueG",imageBase64)
+                displayImageContouring("roueD",imageBase64)
+            })
         }else{
             img.src="./images/site/empty.png"
             img=roueD.firstElementChild
@@ -98,27 +100,66 @@ document.addEventListener("DOMContentLoaded", async function () {
         
         img=guidon.firstElementChild
         if(pieces_selectionnees[2]!=undefined){
-            img.src=pieces_selectionnees[2].image;
+            socket.emit("askImgBase64",pieces_selectionnees[2].image,function(imageBase64){                
+                displayImageContouring("guidon",imageBase64)
+            })        
         }else{
             img.src="./images/site/empty.png"
         }
 
         img=plateau.firstElementChild
         if(pieces_selectionnees[3]!=undefined){
-            img.src=pieces_selectionnees[3].image;
+            socket.emit("askImgBase64",pieces_selectionnees[3].image,function(imageBase64){                
+                displayImageContouring("plateau",imageBase64)
+            })
         }else{
             img.src="./images/site/empty.png"
         }
         
         img=selle.firstElementChild
         if(pieces_selectionnees[4]!=undefined){
-            img.src=pieces_selectionnees[4].image;
+            socket.emit("askImgBase64",pieces_selectionnees[4].image,function(imageBase64){                
+                displayImageContouring("selle",imageBase64)
+            })        
         }else{
             img.src="./images/site/empty.png"
         }
         
     }
 
+    function displayImageContouring(nom_piece,base64){
+        var canvas = document.getElementById(nom_piece);
+        canvas.height=200;
+        canvas.width=200;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        var img = new Image();   // Create new img element
+        img.src = base64
+        img.onload = function(){
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            var imgd = ctx.getImageData(0, 0, canvas.width, canvas.height),
+            pix = imgd.data,
+            newColor = {r:150,g:150,b:120, a:0};
+            for (var i = 0, n = pix.length; i <n; i += 4) {
+                var r = pix[i],
+                        g = pix[i+1],
+                        b = pix[i+2];
+            
+                    if( (r <= 255 && r > 200) 
+                        && (g <= 255 && g > 200)
+                        && (b <= 255 && b > 200)){ 
+                        // Change the white to the new color.
+                        pix[i] = newColor.r;
+                        pix[i+1] = newColor.g;
+                        pix[i+2] = newColor.b;
+                        pix[i+3] = newColor.a;
+                    }
+            }
+            ctx.putImageData(imgd, 0, 0);
+        }
+    }
+    
     //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
     var function_showPieces = async function() {
         var idpiece = this.getAttribute("data-idpiece");
@@ -168,7 +209,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             data_idarticle.value = element._id;
             piecePopup.setAttributeNode(data_idarticle);
 
-            piecePopup.addEventListener("click", function () {
+            piecePopup.addEventListener("click", async function () {
 
                 var piece = {
                     _id: element._id,
@@ -177,7 +218,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     prix: element.prix,
                     lien: element.lien,
                     image: element.image,
-                    carbone: element.carbone
+                    carbone: element.carbone,
                 };
 
                 /*
@@ -404,4 +445,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     })
     
     load()
+
+
 });
