@@ -13,6 +13,7 @@
                 <img src="images/site/logo_temp.png" alt="Logo du site" id="logoSite">NomDuSite
             </span>
         </a>
+
         <a href="myBikes.html">
             <button style="float:right;">Mes vélos (apparaît si connecté)</button>
         </a>
@@ -20,15 +21,16 @@
             <button id="buttonScrapping" style="float:right;">Lancer scrapping</button>
         </a>
         <a href="enregistrement.html">
-            <button style="float:right;">S'enregistrer</button>
+            <button id="btnRegister" style="float:right;">S'enregistrer</button>
         </a>
         <a href="connexion.html">
-            <button style="float:right;">Se connecter</button>
+            <button id="btnLogIn" style="float:right;">Se connecter</button>
         </a>
-        <a href="ajout_db_temp.html">
-            <button disabled style="float:right;">AJOUT DONNÉES (temporaire)</button>
-        </a>
-        <button disabled style="float:right;" id="importDataPreset">IMPORTER DONNÉES (temporaire)</button>
+        <button id="btnLogOut" style="float:right;">Se déconnecter</button>
+
+        <span style="float:right;color:white;" id="nameUser"></span>
+
+
     </div>
 
     <div class="monVeloInfos">

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <script src="../index.js"></script>
+    <script src="./connexion.js"></script>
     <title>Connexion</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
@@ -13,9 +13,11 @@
         </a>
     </div>
     <div class="monVeloImage">
+        <button id="aa">aa</button>
         <div class="titreSection">CONNEXION</div>
         <div style="text-align: center; margin-top:50px">
-            <form action="./api/utilisateur/loginUtilisateur" method="post">
+            <h1 id="errMsg" style="color: red;"></h1>
+            <form id="form">
                 <table>
                     <tr>
                         <td>Nom utilisateur :</td>
@@ -32,4 +34,5 @@
               <h1>Cliquez <a href="enregistrement.html">ici</a> pour créer un compte</h1>
         </div>
     </div>
+    
 </body>

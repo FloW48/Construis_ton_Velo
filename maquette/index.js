@@ -10,6 +10,7 @@ var http = require('http');
 var {Base64Encode} = require('base64-stream');
 const Pdfmake = require('pdfmake');
 var fs = require('fs');
+
 var fonts = {
     Roboto: {
         normal: 'fonts/roboto/Roboto-Regular.ttf',
@@ -65,6 +66,7 @@ app.get('/', function(req, res) {
 
 app.use('/api/equipement',EquipementRoute);
 app.use('/api/utilisateur',UtilisateurRoute);
+
 
 //Import the mongoose module
 var mongoose = require('mongoose');

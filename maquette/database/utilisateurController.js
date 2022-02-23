@@ -44,15 +44,15 @@ const showMe = async (req, res) => {
 const registerUtilisateur = async (req, res, next) => {
     
     let utilisateur = new Utilisateur({
-        nom: req.body.nom,
-        email: req.body.email,
+        nom: req.body.name,
         password: req.body.password
     })
     
     try{
-        let utilisateurExistant= await Utilisateur.findOne({nom:req.body.nom})
+        let utilisateurExistant= await Utilisateur.findOne({nom:req.body.name})
         if(utilisateurExistant){
             return res.json({
+                err:1,
                 message: "Cet utilisateur existe déjà"
             })
         }
@@ -60,28 +60,15 @@ const registerUtilisateur = async (req, res, next) => {
         const salt = await bcrypt.genSalt(10);
         utilisateur.password = await bcrypt.hash(utilisateur.password, salt);
         await utilisateur.save()
-
-        const payload = {
-            utilisateur: {
-                id: utilisateur.id
-            }
-        };
-
-        jwt.sign(
-            payload,
-            "randomString", {
-                expiresIn: 10000
-            },
-            (err, token) => {
-                if (err) throw err;
-                res.json({
-                    token
-                });
-            }
-        );
+        
+        return res.json({
+            err:0,
+            message: "Enregistrement OK"
+        })
 
     }catch(erreur){
         res.json({            
+            err:2,
             message: 'registerUtilisateur: Une erreur est survenue'
         })
     }
@@ -90,15 +77,15 @@ const registerUtilisateur = async (req, res, next) => {
 
 //Connexion d'un utilisateur existant
 const loginUtilisateur = async (req, res, next) => {
-
-    let nom= req.body.nom
+    let nom= req.body.name
     let password= req.body.password
-
+    
     try{
         let user= await Utilisateur.findOne({nom: nom})
         
         if(!user){
             return res.json({
+                err:1,
                 message: "L'utilisateur n'existe pas!"
             });
         };
@@ -106,29 +93,16 @@ const loginUtilisateur = async (req, res, next) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch){
             return res.json({
-            message: "Mot de passe incorrect!"
+                err:2,
+                message: "Mot de passe incorrect!"
             });
         };
 
-        const payload = {
-            user: {
-              id: user.id
-            }
-          };
 
-        jwt.sign(
-            payload,
-            "randomString",
-            {
-              expiresIn: 3600
-            },
-            (err, token) => {
-              if (err) throw err;
-              res.json({
-                token: token
-              });
-            }
-          );
+        return res.json({
+            err:0,
+            message: "Connexion OK"
+        })
 
     }catch (erreur) {
         console.error(erreur);

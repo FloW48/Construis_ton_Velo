@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <script src="../index.js"></script>
+    <script src="./enregistrement.js"></script>
     <title>Enregistrement</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
@@ -15,15 +15,12 @@
     <div class="monVeloImage">
         <div class="titreSection">ENREGISTREMENT</div>
         <div style="text-align: center; margin-top:50px">
-            <form action="./api/utilisateur/registerUtilisateur" method="post">
+            <h1 id="errMsg" style="color: red;"></h1>
+            <form id="form">
                 <table>
                     <tr>
                         <td>Nom utilisateur :</td>
                         <td><input type="text" id="nom" name="nom"></td>
-                    </tr>
-                    <tr>
-                        <td><label for="email">Adresse e-mail :</label></td>
-                        <td><input type="email" id="email" name="email"></td>
                     </tr>
                     <tr>
                         <td>Mot De Passe :</td>

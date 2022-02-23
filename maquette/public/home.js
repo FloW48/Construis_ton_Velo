@@ -23,6 +23,15 @@ function updatePrice(){
 
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
+    
+    //Vérification connexion utilisateur
+    if (localStorage.getItem("isConnected") !== null) {
+        document.getElementById("btnLogIn").remove()
+        document.getElementById("btnRegister").remove()
+        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("idUser").toUpperCase()
+    }else{
+        document.getElementById("btnLogOut").remove()
+    }
 
     let saveButton = document.getElementById("saveButton");
     saveButton.addEventListener("click", ()=>{
@@ -431,9 +440,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     //Import de données préfaites
-    importDataPreset.onclick=async function(){
+    /*importDataPreset.onclick=async function(){
         fetch('http://localhost:8080/importDataPreset')
-    }
+    }*/
 
     let buttonScrapping=document.getElementById("buttonScrapping")
     buttonScrapping.onclick=function(){
@@ -446,5 +455,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     load()
 
-
+    //Bouton déconnexion
+    document.getElementById("btnLogOut").addEventListener("click", function(){
+        localStorage.removeItem("isConnected")
+        window.location.reload()
+    })
 });
