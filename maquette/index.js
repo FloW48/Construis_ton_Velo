@@ -42,6 +42,7 @@ const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
 const EquipementRoute = require('./database/equipementRoute')
+const VeloRoute = require('./database/veloRoute')
 const UtilisateurRoute = require('./database/utilisateurRoute')
 
 server.listen(8080, function() {
@@ -66,6 +67,7 @@ app.get('/', function(req, res) {
 
 app.use('/api/equipement',EquipementRoute);
 app.use('/api/utilisateur',UtilisateurRoute);
+app.use('/api/velo',VeloRoute);
 
 
 //Import the mongoose module

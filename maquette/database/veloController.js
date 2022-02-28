@@ -31,17 +31,34 @@ const showVelo = (req, res, next) => {
     })
 }
 
+const showVelosOfUser = (req, res, next) => {
+    var userID = req.query.userID;
+
+    Velo.find({"id_owner": userID})
+    .then(response => {
+        res.json({
+            response
+        })
+    })
+    .catch(error => {
+        res.json({
+            message: 'showVelosOfUser: Une erreur est survenue'
+        })
+    })
+}
+
 const newVelo = (req, res, next) => {
     let velo = new Velo({
-        _id: req.body._id, 
+        id_owner: req.body.id_owner,
         id_cadre: req.body.id_cadre,
-        id_guidon: req.body.id_guidon,
         id_pneus: req.body.id_pneus,
+        id_guidon: req.body.id_guidon,
         id_plateau: req.body.id_plateau,
         id_selle: req.body.id_selle,
         nom: req.body.nom,
         prix: req.body.prix
     })
+
     velo.save()
     .then(response => {
         res.json({
@@ -50,7 +67,7 @@ const newVelo = (req, res, next) => {
     })
     .catch(error => {
         res.json({            
-            message: 'newEquipement: Une erreur est survenue'
+            message: 'newVelo: Une erreur est survenue'
         })
     })
 }
@@ -94,4 +111,4 @@ const updateVelo = (req, res , next) => {
 
 }
 
-module.exports = {showAll, showVelo, newVelo, deleteAll, updateVelo}
+module.exports = {showAll, showVelo, showVelosOfUser, newVelo, deleteAll, updateVelo}

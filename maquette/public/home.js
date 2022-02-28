@@ -17,9 +17,17 @@ function updatePrice(){
     let prixTotalDisplay=document.getElementById("prixTotal")
     prixTotalDisplay.innerHTML="Prix total: "+prixTotal+"€"
 
+    return prixTotal
 }
 
-
+function isVeloComplet(){    
+    for(let i=0;i<pieces_selectionnees.length;i++){
+        if(pieces_selectionnees[i]==null){
+            return false
+        }
+    }
+    return true
+}
 
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
@@ -28,14 +36,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (localStorage.getItem("isConnected") !== null) {
         document.getElementById("btnLogIn").remove()
         document.getElementById("btnRegister").remove()
-        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("idUser").toUpperCase()
+        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userID").toUpperCase()
     }else{
         document.getElementById("btnLogOut").remove()
+        document.getElementById("btnMesVelos").remove()
     }
 
     let saveButton = document.getElementById("saveButton");
     saveButton.addEventListener("click", ()=>{
-        if(document.getElementById("containerImage").children.length === 6){    //Corriger la vérification du vélo complet
+        if(isVeloComplet){
             let velo = [];
             let savePieces = JSON.parse(localStorage.getItem("savePieces"));
             for(let elem of savePieces){
@@ -460,4 +469,47 @@ document.addEventListener("DOMContentLoaded", async function () {
         localStorage.removeItem("isConnected")
         window.location.reload()
     })
+
+    //Bouton 'Sauvegarder'
+    document.getElementById("saveVelo").addEventListener("click", async function(){
+        let nomVelo=document.getElementById("nomVelo").value
+        if(!isVeloComplet()){
+            console.log("velo pas complet")
+            return
+        }
+        
+        if (nomVelo.trim()==""){
+            console.log("nom vide")
+            return
+        }
+
+        const params = {
+            id_owner: localStorage.getItem("userID"),
+            id_cadre: pieces_selectionnees[0]._id,
+            id_pneus: pieces_selectionnees[1]._id,
+            id_guidon: pieces_selectionnees[2]._id,
+            id_plateau: pieces_selectionnees[3]._id,
+            id_selle: pieces_selectionnees[4]._id,
+            nom: nomVelo,
+            prix: updatePrice()
+        };
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify( params )  
+        };
+
+        await fetch( 'http://localhost:8080/api/velo/newVelo', options )
+            .then( response => response.json() )
+            .then( response => {
+                console.log(response)
+
+            } );
+        
+            console.log(params)
+    })
+
+
 });

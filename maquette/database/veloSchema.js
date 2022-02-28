@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const veloSchema = new Schema({
-    _id: Number,
+    id_owner: String,
     id_cadre: Number,
     id_guidon: Number,
     id_pneus: Number,

@@ -173,6 +173,7 @@ button{
 
 .pieceSelected img{
     background-color: red;
+    border: solid 2px red;
     width: 100px;
     height: 100px;
     margin: 10px auto;
@@ -181,7 +182,7 @@ button{
 
 .monVeloImage{
     position:relative;
-    margin:auto;
+    margin:15px auto;
 
     height: 500px;
     width: 80%;
@@ -194,6 +195,20 @@ button{
 }
 .monVeloImage button{
     margin:5px;
+}
+
+.monVeloImage .bottom{
+    position:absolute;
+    bottom:0;
+
+    height: 30px;
+    width: 100%;
+
+    background-color: red;
+    
+    text-align: center;
+    line-height: 30px;
+    color:white;
 }
 
 #cadre{
@@ -375,4 +390,42 @@ button{
 
 .selected{
     background-color: green;
+}
+
+.errMsg{
+    color:red;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.vosVelos{
+    width: 250px;
+    
+    background-color: red;
+    border-radius: 3px;
+    border-top:none;
+
+    margin:10px auto;
+    padding: 5px;
+
+    color:white;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.resumeVelo{
+    position:relative;
+    margin:15px auto;
+
+    height: 250px;
+    width: 80%;
+
+    border:solid 2px red;
+    border-top-right-radius: 7px;
+    border-top:none;
+
+    overflow:auto;
 }

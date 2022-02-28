@@ -27,15 +27,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             .then( response => {
                 console.log(response)
                 if(response.err==1){
-                    document.getElementById("errMsg").innerHTML=response.message
+                    document.getElementsByClassName("errMsg")[0].innerHTML=response.message
                 }else{    
-                    window.location.href = "..";
-                    localStorage.setItem("isConnected", "true");
-                    localStorage.setItem("idUser", params.name);
+                    window.location.href = "../connexion.html";
                 }
                 
-
-            } );
+            });
             
 
 

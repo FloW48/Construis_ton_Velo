@@ -27,14 +27,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             .then( response => {
                 console.log(response)
                 if(response.err==1){
-                    document.getElementById("errMsg").innerHTML=response.message
+                    document.getElementsByClassName("errMsg")[0].innerHTML=response.message
                 }else{
                     if(response.err==2){
-                        document.getElementById("errMsg").innerHTML=response.message
+                        document.getElementsByClassName("errMsg")[0].innerHTML=response.message
                     }else{
-                        window.location.href = "..";
                         localStorage.setItem("isConnected", "true");
-                        localStorage.setItem("idUser", params.name);
+                        localStorage.setItem("userID", response.user._id)
+                        window.location.href = "..";
                     }
                 }
                 

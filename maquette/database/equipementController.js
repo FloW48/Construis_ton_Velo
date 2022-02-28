@@ -15,6 +15,7 @@ const showAll = (req, res, next) => {
     })
 }
 
+//Retourne toutes les pièces d'un même type
 const showPieces = (req, res, next) => {
     var pieceID = req.query.pieceID;
 
@@ -27,6 +28,23 @@ const showPieces = (req, res, next) => {
     .catch(error => {
         res.json({
             message: 'showPieces: Une erreur est survenue'
+        })
+    })
+}
+
+//Retourne une pièce correspondant à un ID
+const showPiece = (req, res, next) => {
+    var pieceID = req.query.pieceID;
+
+    Equipement.find({"_id": pieceID})
+    .then(response => {
+        res.json({
+            response
+        })
+    })
+    .catch(error => {
+        res.json({
+            message: 'showPiece: Une erreur est survenue'
         })
     })
 }
@@ -86,4 +104,4 @@ const findMinPrice = (req, res, next) => {
 
 
 
-module.exports = {showAll, showPieces, newEquipement, deleteAll, findMinPrice} 
+module.exports = {showAll, showPieces, showPiece, newEquipement, deleteAll, findMinPrice} 

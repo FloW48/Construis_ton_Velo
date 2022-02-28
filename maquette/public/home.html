@@ -15,7 +15,7 @@
         </a>
 
         <a href="myBikes.html">
-            <button style="float:right;">Mes vélos (apparaît si connecté)</button>
+            <button id="btnMesVelos" style="float:right;">Mes vélos</button>
         </a>
         <a>
             <button id="buttonScrapping" style="float:right;">Lancer scrapping</button>
@@ -82,8 +82,6 @@
 
     <div class="monVeloImage">
         <div class="titreSection">IMAGE VELO</div>
-        <button id="saveButton" style="float: left;">Sauvegarder</button>
-        <a href="payment.html"><button style="float:right">Payer</button></a>
         <div id="containerImage">
             <canvas id="cadre">
                 <img>
@@ -103,6 +101,11 @@
             <canvas id="selle">
                 <img>
             </canvas>
+        </div>
+        <div class="bottom">
+            <button id="saveButton" style="float: left;">Facture</button>
+            Nom du vélo: <input type="text" id="nomVelo" name="nomVelo">
+            <button id="saveVelo" style="float:right">Sauvegarder</button>
         </div>
     </div>
 

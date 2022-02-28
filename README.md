@@ -14,7 +14,13 @@ Packages à installer:
 - npm install jsonwebtoken --save
 - npm install bcryptjs --save
 - npm install express-validator --save
+- npm install base64-stream --save
+- npm install pdfmake --save
 
+Version node:
+    v14.18.1
+Version npm:
+    v6.14.15
 
 Pour lancer l'application: aller dans le dossier 'maquette' puis faire la commande 'node .'
 

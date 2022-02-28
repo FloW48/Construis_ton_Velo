@@ -53,7 +53,7 @@ const registerUtilisateur = async (req, res, next) => {
         if(utilisateurExistant){
             return res.json({
                 err:1,
-                message: "Cet utilisateur existe déjà"
+                message: "Ce nom d'utilisateur est déjà utilisé"
             })
         }
 
@@ -101,6 +101,7 @@ const loginUtilisateur = async (req, res, next) => {
 
         return res.json({
             err:0,
+            user,
             message: "Connexion OK"
         })
 
