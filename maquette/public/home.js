@@ -45,16 +45,28 @@ document.addEventListener("DOMContentLoaded", async function () {
     let saveButton = document.getElementById("saveButton");
     saveButton.addEventListener("click", ()=>{
         if(isVeloComplet){
-            let velo = [];
+            let autresInfos={
+                nomClient:"unnamedUser",
+                nomVelo:"unnamedBike",
+            }
+
+            let veloPieces = [];
             let savePieces = JSON.parse(localStorage.getItem("savePieces"));
             for(let elem of savePieces){
                 delete elem['_id'];
                 delete elem['id_partie'];
                 delete elem['carbone'];
                 
-                velo.push(elem);
+                veloPieces.push(elem);
             }
-            socket.emit("sauvegarder", velo);
+
+            let infosFacture={
+                veloPieces,
+                autresInfos
+            }  
+
+            socket.emit("sauvegarder", infosFacture);
+        
         }else{
             alert("Il vous faut un vélo complet pour le sauvegarder");
         }
@@ -78,7 +90,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
     var elements_showPieces = document.getElementsByClassName("showPiece");
-    var importDataPreset = document.getElementById("importDataPreset");
 
     updatePrice()
 
@@ -100,7 +111,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         }else{
             img.src="./images/site/empty.png"
         }
-        
         
 
         img=roueG.firstElementChild
@@ -228,7 +238,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             piecePopup.setAttributeNode(data_idarticle);
 
             piecePopup.addEventListener("click", async function () {
-
                 var piece = {
                     _id: element._id,
                     id_partie: element.id_partie,
@@ -511,5 +520,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             console.log(params)
     })
 
+    socket.on("pdfPath",(nom_pdf)=>{
+        console.log("Génération de la facture sous format PDF: OK")
+        let path="../"+nom_pdf+".pdf"
+        window.open(path, "_blank");
+    })
 
 });

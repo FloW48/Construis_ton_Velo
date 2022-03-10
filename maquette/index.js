@@ -282,9 +282,9 @@ io.on('connection', function (socket) {
         console.log("update reçu");
     });
 
-    socket.on("sauvegarder", (velo)=> {
-        //const pdfDoc = new PDFDocument();
+    socket.on("sauvegarder", async (infosFacture)=> {
         let info = [];
+        let velo=infosFacture.veloPieces
         let total = 0;
         for(let i = 0;i<5;i++){
             let nom = velo[i].nom;
@@ -292,12 +292,13 @@ io.on('connection', function (socket) {
             if(i == 1) prix*=2;
             total += prix;
             let lien = velo[i].lien;
-            info.push({'nom':nom,'prix':prix,'lien':lien});
+            let imageBase64=await base64Image(velo[i].image)
+            info.push({'nom':nom,'prix':prix,'lien':lien,'imageBase64':imageBase64});
         }
-        info.push(total);
-        /*var pdfDoc = pdfmake.createPdfKitDocument(doc,{});
-        pdfDoc.pipe(fs.createWriteStream('Votre vélo.pdf'));
-        pdfDoc.end();*/
+        
+        info.push(total);   //Index 5: Prix total
+        info.push(infosFacture.autresInfos) //Index 6: autres infos: nomVelo et nomClient
+
 
         makePDF({
             data: info
@@ -308,7 +309,6 @@ io.on('connection', function (socket) {
         socket.emit("finPDF",(pdfDoc) =>{
             console.log("PDF envoyé au client");
         });
-        //pdfMake.createPdf(doc).download("Votre vélo.pdf");
     });
 
     socket.on("lancerScrapping", async ()=>{
@@ -317,6 +317,10 @@ io.on('connection', function (socket) {
         io.sockets.emit("scrappingOK")
     })
 
+    async function base64Image(image){
+        let base64=await fetch(image).then(r => r.buffer()).then(buf => `data:image/${"jpg"};base64,`+buf.toString('base64'));
+        return base64
+    }
 
     //Renvoi au client la valeur encodée d'une image jpg en base64
     socket.on("askImgBase64",async function(image, callback){
@@ -328,16 +332,24 @@ io.on('connection', function (socket) {
     const makePDF = (datas) => {
         let aPromise = new Promise((resolve, reject) => {
             console.time('creatingPDF')
+            
+            const d = new Date();
+            let currDate=d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear() + "-" + d.getHours() + "-" + d.getMinutes() + "-" + d.getSeconds()
+            
+            let nomPDF=currDate+"-"+datas.data[6].nomVelo;
+            let titreVelo="Votre vélo \""+datas.data[6].nomVelo+"\""
+            let nomClient=datas.data[6].nomClient
 
-            /// all those stuffs
+            console.log(datas)
+
             var doc = {
                 content: [
                     { text : 'Nom du site',style: 'nosCoords'},
                     { text : '16 route de Gray', style : 'nosCoords' },
                     { text : '25000 Besançon', style : 'nosCoords'},
         
-                    { text : 'Votre vélo #256',style: 'utilCoords'},
-                    { text: 'Robert Utilisateur', style : 'utilCoords'},
+                    { text : titreVelo,style: 'utilCoords'},
+                    { text : nomClient, style : 'utilCoords'},
                     { text : '10 Grande Rue', style : 'utilCoords' },
                     { text : '70100 Gray', style : 'utilCoords'},
                     { style: 'table',
@@ -355,12 +367,33 @@ io.on('connection', function (socket) {
                             ],
                         },
                     },
-                    /*{ image: 'sampleImage.jpg',
-                        width: 150,
-                        height: 150,
-                        alignment : 'center',
-                        margin: [0,110,0,150]
-                    }*/
+                    {table: {
+                        body: [
+                            [{
+                                image: datas.data[0].imageBase64,
+                                fit: [100, 100],
+                            },
+                            {
+                                image: datas.data[1].imageBase64,
+                                fit: [100, 100],
+                            },
+                            {
+                                image: datas.data[2].imageBase64,
+                                fit: [100, 100],
+                            },
+                            {
+                                image: datas.data[3].imageBase64,
+                                fit: [100, 100],
+                            },
+                            {
+                                image: datas.data[4].imageBase64,
+                                fit: [100, 100],
+                            },
+                        ],
+                        ]
+                      },
+                      layout: 'noBorders'
+                    },
                 ],
                 styles: {
                    nosCoords: {
@@ -390,14 +423,16 @@ io.on('connection', function (socket) {
 
             let pdfDoc = pdfmake.createPdfKitDocument(doc, {});
 
-            let writeStream = fs.createWriteStream('Votre vélo.pdf');
+            let path="./public/"+nomPDF+".pdf"
+            let writeStream = fs.createWriteStream(path);
 
             pdfDoc.pipe(writeStream);
             pdfDoc.end();
 
             writeStream.on('finish', function () {
                 console.timeEnd('creatingPDF');
-                resolve('Votre vélo.pdf');
+                resolve(nomPDF+".pdf");
+                socket.emit("pdfPath",nomPDF)
             });
 
         })

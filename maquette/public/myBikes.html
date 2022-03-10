@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <head>
     <script src="../myBikes.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
     <title>Mes vélos</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
 </head>
 <body>
+
     <div class="top">
         <a href="home.html">
             <span id="nomSite">
@@ -12,4 +15,32 @@
             </span>
         </a>
     </div>
+
+    <div id="popupPiece" class="popup">
+        <span id="closePopup">&times;</span>
+        <div class="popup-content">
+            <div id="containerImage">
+                <canvas id="cadre" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+                <canvas id="roueG" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+                <canvas id="roueD" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+                <canvas id="guidon" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+                <canvas id="plateau" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+                <canvas id="selle" height="200" width="200">
+                    <img src="./images/site/empty.png">
+                </canvas>
+            </div>
+        </div>
+    </div>
+    
+    
 </body>

@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                     }else{
                         localStorage.setItem("isConnected", "true");
                         localStorage.setItem("userID", response.user._id)
+                        localStorage.setItem("userNom", response.user.nom)
                         window.location.href = "..";
                     }
                 }

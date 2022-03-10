@@ -1,6 +1,14 @@
 
 document.addEventListener("DOMContentLoaded", async function () {
-    
+    let socket = io.connect();
+
+    var popupPiece = document.getElementById("popupPiece");
+    var closePopup = document.getElementById("closePopup");
+
+    closePopup.onclick = function() {
+        popupPiece.style.display = "none";
+    }
+
     if (localStorage.getItem("isConnected") === null) {
         let errMsg=document.createElement("div")
         errMsg.classList.add("errMsg")
@@ -13,6 +21,10 @@ document.addEventListener("DOMContentLoaded", async function () {
         vosVelos.innerHTML="Vos vélos: "
         document.body.appendChild(vosVelos)
 
+        let bikeList=document.createElement("div")
+        bikeList.setAttribute("id","bikeList")
+        document.body.appendChild(bikeList)
+
         var fetch_url="http://localhost:8080/api/velo/showVelosOfUser?userID="+localStorage.getItem("userID")
 
         var velosUser= await fetch(fetch_url);
@@ -20,8 +32,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         console.log(data)
 
-        let cpt=0
-        data['response'].forEach(function(velo){
+        let num_velo=0
+        data['response'].forEach(async function(velo){
+
             let mainPanel=document.createElement("div")
             mainPanel.classList.add("monVeloInfos")
             
@@ -59,25 +72,200 @@ document.addEventListener("DOMContentLoaded", async function () {
             tbody.appendChild(tr1)
 
             let tr2=document.createElement("tr")
+            let td=document.createElement("td")
+            for(let i=0;i<5;i++){
+                tr2.appendChild(td.cloneNode(true))
+            }
+
             tbody.appendChild(tr2)
 
             table.appendChild(tbody)
             mainPanel.appendChild(table)
+            
+            let bottom=document.createElement("div")
+            bottom.classList.add("bottom")
 
-            document.body.appendChild(mainPanel)
+            let btnFacture=document.createElement("button")
+            btnFacture.innerHTML="Facture"
+            btnFacture.classList.add("saveButton")
+            btnFacture.setAttribute("data-idVelo",velo._id)
 
-            displayPiece(velo.id_cadre,cpt)
-            displayPiece(velo.id_pneus,cpt)
-            displayPiece(velo.id_guidon,cpt)
-            displayPiece(velo.id_plateau,cpt)
-            displayPiece(velo.id_selle,cpt)
-            cpt++
+            let idpieces_velo=[]
+            idpieces_velo.push(velo.id_cadre)
+            idpieces_velo.push(velo.id_pneus)
+            idpieces_velo.push(velo.id_guidon)
+            idpieces_velo.push(velo.id_plateau)
+            idpieces_velo.push(velo.id_selle)
+
+            let veloPieces=[]
+            
+            let autresInfos={
+                nomClient:localStorage.getItem("userNom"),
+                nomVelo:velo.nom,
+            }
+            
+
+            for(let i=0;i<5;i++){
+                var fetch_url="http://localhost:8080/api/equipement/showPiece?pieceID="+idpieces_velo[i]
+
+                var piece= await fetch(fetch_url);
+                var data = await piece.json();
+
+                let infos_piece=data['response'][0]
+                delete infos_piece['_id'];
+                delete infos_piece['id_partie'];
+                delete infos_piece['carbone'];
+                veloPieces.push(infos_piece)
+            }
+            
+            console.log(veloPieces)
+
+            btnFacture.addEventListener("click", async ()=>{
+                console.log(event.target.getAttribute("data-idVelo"))
+                let infosFacture={
+                    veloPieces,
+                    autresInfos
+                }              
+                socket.emit("sauvegarder", infosFacture);
+            })
+
+            bottom.appendChild(btnFacture)
+
+            let btnAfficherVelo=document.createElement("button")
+            btnAfficherVelo.innerHTML="Afficher vélo"
+            btnAfficherVelo.classList.add("afficherVelo")
+            btnAfficherVelo.setAttribute("data-idVelo",velo._id)
+
+            btnAfficherVelo.addEventListener("click",async()=>{
+                popupPiece.style.display = "block";
+                displayImages(veloPieces)
+            })
+
+
+            bottom.appendChild(btnAfficherVelo)
+
+            mainPanel.appendChild(bottom)
+
+            bikeList.appendChild(mainPanel)
+
+            for(let i=0;i<5;i++){
+                displayPiece(idpieces_velo[i],num_velo,i)
+            }
+        
+            num_velo++
             
         })
     }
+
+    //Affiche le vélo complet
+    async function displayImages(infos_velo){
+        console.log("infos velo", infos_velo)
+        let cadre=document.getElementById("cadre")
+        let roueG=document.getElementById("roueG")
+        let roueD=document.getElementById("roueD")
+        let guidon=document.getElementById("guidon")
+        let plateau=document.getElementById("plateau")
+        let selle=document.getElementById("selle")
+
+
+        let img=cadre.firstElementChild
+        if(infos_velo[0]!=undefined){
+            socket.emit("askImgBase64",infos_velo[0].image,function(imageBase64){                
+                displayImageContouring("cadre",imageBase64)
+            })
+        }else{
+            img.src="./images/site/empty.png"
+        }
+        
+        
+
+        img=roueG.firstElementChild
+        if(infos_velo[1]!=undefined){
+            socket.emit("askImgBase64",infos_velo[1].image,function(imageBase64){                
+                displayImageContouring("roueG",imageBase64)
+                displayImageContouring("roueD",imageBase64)
+            })
+        }else{
+            img.src="./images/site/empty.png"
+            img=roueD.firstElementChild
+            img.src="./images/site/empty.png";
+        }
+        
+        
+        img=guidon.firstElementChild
+
+            socket.emit("askImgBase64",infos_velo[2].image,function(imageBase64){                
+                displayImageContouring("guidon",imageBase64)
+            })        
+
+
+        img=plateau.firstElementChild
+        if(infos_velo[3]!=undefined){
+            socket.emit("askImgBase64",infos_velo[3].image,function(imageBase64){                
+                displayImageContouring("plateau",imageBase64)
+            })
+        }else{
+            img.src="./images/site/empty.png"
+        }
+        
+        img=selle.firstElementChild
+        if(infos_velo[4]!=undefined){
+            socket.emit("askImgBase64",infos_velo[4].image,function(imageBase64){                
+                displayImageContouring("selle",imageBase64)
+            })        
+        }else{
+            img.src="./images/site/empty.png"
+        }
+        
+    }
+
+    function displayImageContouring(nom_piece,base64){
+        var canvas = document.getElementById(nom_piece);
+        canvas.height=200;
+        canvas.width=200;
+        var ctx = canvas.getContext("2d");
+        ctx.fillStyle = "red";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        var img = new Image();   // Create new img element
+        img.src = base64
+        img.onload = function(){
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            var imgd = ctx.getImageData(0, 0, canvas.width, canvas.height),
+            pix = imgd.data,
+            newColor = {r:150,g:150,b:120, a:0};
+            for (var i = 0, n = pix.length; i <n; i += 4) {
+                var r = pix[i],
+                        g = pix[i+1],
+                        b = pix[i+2];
+            
+                    if( (r <= 255 && r > 200) 
+                        && (g <= 255 && g > 200)
+                        && (b <= 255 && b > 200)){ 
+                        // Change the white to the new color.
+                        pix[i] = newColor.r;
+                        pix[i+1] = newColor.g;
+                        pix[i+2] = newColor.b;
+                        pix[i+3] = newColor.a;
+                    }
+            }
+            ctx.putImageData(imgd, 0, 0);
+        }
+    }
+
+    socket.on("pdfPath",(nom_pdf)=>{
+        console.log("Génération de la facture sous format PDF: OK")
+        let path="../"+nom_pdf+".pdf"
+        window.open(path, "_blank");
+    })
+    
 });
 
-async function displayPiece(id_piece, num_velo){
+/*
+* id_piece: Identifiant unique de la piece
+* num_velo: Numero du velo dans la liste
+* num_piece: Type de piece (0: Cadre, 1: Pneu, 2: Guidon, 3: Plateau, 4: Selle)
+*/
+async function displayPiece(id_piece, num_velo, num_piece){
     var fetch_url="http://localhost:8080/api/equipement/showPiece?pieceID="+id_piece
 
     var piece= await fetch(fetch_url);
@@ -147,7 +335,10 @@ async function displayPiece(id_piece, num_velo){
     let td=document.createElement("td")
     td.appendChild(pieceSelected)
 
-    document.body.childNodes[num_velo+4].childNodes[1].childNodes[0].childNodes[1].appendChild(td)
+    let bikeList=document.getElementById("bikeList")
+    bikeList.childNodes[num_velo].childNodes[1].childNodes[0].childNodes[1].childNodes[num_piece].appendChild(pieceSelected)
 
     return pieceSelected
 }
+
+
