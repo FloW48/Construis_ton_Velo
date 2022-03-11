@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
 
@@ -30,11 +29,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         var velosUser= await fetch(fetch_url);
         var data = await velosUser.json();
 
-        console.log(data)
+        if(data['response'].length===0){
+            let msgAucunVelo=document.createElement("div")
+            msgAucunVelo.classList.add("errMsg")
+            msgAucunVelo.innerHTML="Vous n'avez pas encore sauvegardé de vélo!"
+            document.body.appendChild(msgAucunVelo)
+        }
 
         let num_velo=0
         data['response'].forEach(async function(velo){
-
             let mainPanel=document.createElement("div")
             mainPanel.classList.add("monVeloInfos")
             
@@ -88,7 +91,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             let btnFacture=document.createElement("button")
             btnFacture.innerHTML="Facture"
             btnFacture.classList.add("saveButton")
-            btnFacture.setAttribute("data-idVelo",velo._id)
 
             let idpieces_velo=[]
             idpieces_velo.push(velo.id_cadre)
@@ -118,8 +120,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 veloPieces.push(infos_piece)
             }
             
-            console.log(veloPieces)
-
             btnFacture.addEventListener("click", async ()=>{
                 console.log(event.target.getAttribute("data-idVelo"))
                 let infosFacture={
@@ -134,15 +134,55 @@ document.addEventListener("DOMContentLoaded", async function () {
             let btnAfficherVelo=document.createElement("button")
             btnAfficherVelo.innerHTML="Afficher vélo"
             btnAfficherVelo.classList.add("afficherVelo")
-            btnAfficherVelo.setAttribute("data-idVelo",velo._id)
-
             btnAfficherVelo.addEventListener("click",async()=>{
                 popupPiece.style.display = "block";
                 displayImages(veloPieces)
             })
 
-
             bottom.appendChild(btnAfficherVelo)
+
+            let btnSupprimerVelo=document.createElement("button")
+            btnSupprimerVelo.innerHTML="Supprimer vélo"
+            btnSupprimerVelo.classList.add("supprimerVelo")
+            btnSupprimerVelo.addEventListener("click",async(event)=>{
+                console.log("supprimer velo", velo._id)
+                var fetch_url="http://localhost:8080/api/velo/deleteOne?veloID="+velo._id
+                var res= await fetch(fetch_url);
+                var data = await res.json();
+
+                if(data['err']===0){
+                    event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode);  //Supprime le vélo côté client
+                }
+            })
+
+            bottom.appendChild(btnSupprimerVelo)
+
+            let infoAchat=document.createElement("div")
+            infoAchat.classList.add("infoAchat")
+            bottom.appendChild(infoAchat)
+
+            let isBought=velo.isBought
+            if(!isBought){
+                infoAchat.innerHTML="Ce vélo n'a pas été acheté"
+
+                let btnAcheterVelo=document.createElement("button")
+                btnAcheterVelo.innerHTML="Acheter vélo"
+                btnAcheterVelo.classList.add("acheterVelo")
+                btnAcheterVelo.addEventListener("click",async(event)=>{
+                    console.log("acheter velo", velo._id)
+                    var fetch_url="http://localhost:8080/api/velo/acheterVelo?veloID="+velo._id
+                    var res= await fetch(fetch_url);
+                    var data = await res.json();
+
+                    if(data['err']===0){
+                        infoAchat.innerHTML="Ce vélo a été acheté"
+                    }
+                })
+                infoAchat.appendChild(btnAcheterVelo)
+            }else{
+                infoAchat.innerHTML="Ce vélo a été acheté"
+            }
+
 
             mainPanel.appendChild(bottom)
 
@@ -193,11 +233,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         
         
         img=guidon.firstElementChild
-
-            socket.emit("askImgBase64",infos_velo[2].image,function(imageBase64){                
+        if(infos_velo[2]!=undefined){
+            socket.emit("askImgBase64",infos_velo[2].image,function(imageBase64){
                 displayImageContouring("guidon",imageBase64)
             })        
-
+        }else{
+            img.src="./images/site/empty.png"
+        }
 
         img=plateau.firstElementChild
         if(infos_velo[3]!=undefined){
@@ -219,7 +261,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         
     }
 
-    function displayImageContouring(nom_piece,base64){
+    async function displayImageContouring(nom_piece,base64){
         var canvas = document.getElementById(nom_piece);
         canvas.height=200;
         canvas.width=200;

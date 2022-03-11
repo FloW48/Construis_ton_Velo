@@ -15,7 +15,7 @@ Packages à installer:
 - npm install bcryptjs --save
 - npm install express-validator --save
 - npm install base64-stream --save
-- npm install pdfmake --save
+- npm install pdfmake@0.2.4 --save
 
 Version node:
     v14.18.1

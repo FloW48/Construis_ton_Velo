@@ -42,35 +42,6 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.getElementById("btnMesVelos").remove()
     }
 
-    let saveButton = document.getElementById("saveButton");
-    saveButton.addEventListener("click", ()=>{
-        if(isVeloComplet){
-            let autresInfos={
-                nomClient:"unnamedUser",
-                nomVelo:"unnamedBike",
-            }
-
-            let veloPieces = [];
-            let savePieces = JSON.parse(localStorage.getItem("savePieces"));
-            for(let elem of savePieces){
-                delete elem['_id'];
-                delete elem['id_partie'];
-                delete elem['carbone'];
-                
-                veloPieces.push(elem);
-            }
-
-            let infosFacture={
-                veloPieces,
-                autresInfos
-            }  
-
-            socket.emit("sauvegarder", infosFacture);
-        
-        }else{
-            alert("Il vous faut un vélo complet pour le sauvegarder");
-        }
-    })
     
     //Charge les données du Local storage
     function load(){
@@ -95,64 +66,51 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     //Affiche le vélo en bas de page
     async function displayImages(){
-        let cadre=document.getElementById("cadre")
-        let roueG=document.getElementById("roueG")
-        let roueD=document.getElementById("roueD")
-        let guidon=document.getElementById("guidon")
-        let plateau=document.getElementById("plateau")
-        let selle=document.getElementById("selle")
+        let emptyPNGbase64="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg=="
 
-
-        let img=cadre.firstElementChild
         if(pieces_selectionnees[0]!=undefined){
             socket.emit("askImgBase64",pieces_selectionnees[0].image,function(imageBase64){                
                 displayImageContouring("cadre",imageBase64)
             })
         }else{
-            img.src="./images/site/empty.png"
+            displayImageContouring("cadre",emptyPNGbase64)
         }
         
-
-        img=roueG.firstElementChild
         if(pieces_selectionnees[1]!=undefined){
             socket.emit("askImgBase64",pieces_selectionnees[1].image,function(imageBase64){                
                 displayImageContouring("roueG",imageBase64)
                 displayImageContouring("roueD",imageBase64)
             })
         }else{
-            img.src="./images/site/empty.png"
-            img=roueD.firstElementChild
-            img.src="./images/site/empty.png";
+            displayImageContouring("roueG",emptyPNGbase64)
+            displayImageContouring("roueD",emptyPNGbase64)
         }
         
         
-        img=guidon.firstElementChild
         if(pieces_selectionnees[2]!=undefined){
-            socket.emit("askImgBase64",pieces_selectionnees[2].image,function(imageBase64){                
+            socket.emit("askImgBase64",pieces_selectionnees[2].image,function(imageBase64){
                 displayImageContouring("guidon",imageBase64)
             })        
         }else{
-            img.src="./images/site/empty.png"
+            displayImageContouring("guidon",emptyPNGbase64)
         }
 
-        img=plateau.firstElementChild
         if(pieces_selectionnees[3]!=undefined){
-            socket.emit("askImgBase64",pieces_selectionnees[3].image,function(imageBase64){                
+            socket.emit("askImgBase64",pieces_selectionnees[3].image,function(imageBase64){
                 displayImageContouring("plateau",imageBase64)
             })
         }else{
-            img.src="./images/site/empty.png"
+            displayImageContouring("plateau",emptyPNGbase64)
         }
         
-        img=selle.firstElementChild
         if(pieces_selectionnees[4]!=undefined){
-            socket.emit("askImgBase64",pieces_selectionnees[4].image,function(imageBase64){                
+            socket.emit("askImgBase64",pieces_selectionnees[4].image,function(imageBase64){ 
                 displayImageContouring("selle",imageBase64)
             })        
         }else{
-            img.src="./images/site/empty.png"
+            displayImageContouring("selle",emptyPNGbase64)
         }
-        
+
     }
 
     function displayImageContouring(nom_piece,base64){
@@ -482,13 +440,26 @@ document.addEventListener("DOMContentLoaded", async function () {
     //Bouton 'Sauvegarder'
     document.getElementById("saveVelo").addEventListener("click", async function(){
         let nomVelo=document.getElementById("nomVelo").value
+
+        let msgErreur=document.getElementsByClassName("errMsg")[0]
+
         if(!isVeloComplet()){
-            console.log("velo pas complet")
+            msgErreur.innerHTML="Votre vélo n'est pas complet."
+            
+            setTimeout(function() {
+                msgErreur.innerHTML = ""
+              }, 3000)
+
             return
         }
         
         if (nomVelo.trim()==""){
-            console.log("nom vide")
+            msgErreur.innerHTML="Le nom de votre vélo ne doit pas être vide."
+
+            setTimeout(function() {
+                msgErreur.innerHTML = ""
+              }, 3000)
+
             return
         }
 
@@ -518,8 +489,18 @@ document.addEventListener("DOMContentLoaded", async function () {
             } );
         
             console.log(params)
+
+        //Message de confirmation de la sauvegarde du vélo
+        msgErreur.style.color = 'green';
+        msgErreur.innerHTML="Vélo sauvegardé!"
+        setTimeout(function() {
+            msgErreur.style.color = 'red';
+            msgErreur.innerHTML = ""
+          }, 3000)
+
     })
 
+    //Réception du chemin du PDF de la facture et ouverture dans une autre fenêtre du PDF
     socket.on("pdfPath",(nom_pdf)=>{
         console.log("Génération de la facture sous format PDF: OK")
         let path="../"+nom_pdf+".pdf"

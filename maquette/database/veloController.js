@@ -56,7 +56,8 @@ const newVelo = (req, res, next) => {
         id_plateau: req.body.id_plateau,
         id_selle: req.body.id_selle,
         nom: req.body.nom,
-        prix: req.body.prix
+        prix: req.body.prix,
+        isBought: false
     })
 
     velo.save()
@@ -86,29 +87,40 @@ const deleteAll  = (req, res, next) => {
     })
 }
 
-const updateVelo = (req, res , next) => {
-    let veloID = req.body.veloID
+const deleteOne  = (req, res, next) => {
+    let id = req.query.veloID
 
-    let updatedData = {
-        id_cadre: req.body.id_cadre,
-        id_guidon: req.body.id_guidon,
-        id_pneus: req.body.id_pneus,
-        id_plateau: req.body.id_plateau,
-        id_selle: req.body.id_selle,
-        nom: req.body.nom,
-        prix: req.body.prix
-    }
-
-    Velo.findByIdAndUpdate(veloID, {$set: updatedData}).then(()=>{
+    Velo.findByIdAndRemove(id)
+    .then(response => {
         res.json({
-            message: "Velo updated successfully"
+            err:0,
+            message: "Le vélo a bien été supprimé"
+        })
+    })
+    .catch(error => {
+        res.json({
+            err:1,  
+            message: 'deleteOne: Une erreur est survenue'
+        })
+    })
+}
+
+//Change le boolean isBought de 'false' à 'true'
+const acheterVelo = (req, res , next) => {
+    let id = req.query.veloID
+
+    Velo.findByIdAndUpdate(id, {$set: {isBought: true}}).then(()=>{
+        res.json({
+            err: 0,
+            message: "Vélo mis à jour"
         })
     }).catch(()=>{
         res.json({
-            message: "Error on update"
+            err: 1,
+            message: "acheterVelo: Une erreur est survenue"
         })
     })
 
 }
 
-module.exports = {showAll, showVelo, showVelosOfUser, newVelo, deleteAll, updateVelo}
+module.exports = {showAll, showVelo, showVelosOfUser, newVelo, deleteAll, deleteOne, acheterVelo}

@@ -110,8 +110,8 @@ button{
 
 .monVeloInfos{
     position:relative;
-    margin:15px auto;
-
+    margin:25px auto;
+    margin-bottom: 75px;
     width: 80%;
     height:75%;
 
@@ -151,6 +151,13 @@ button{
 
 .monVeloInfos .bottom button{
     border:solid 2px red;
+    margin:5px;
+}
+
+.monVeloInfos .infoAchat{
+    border:solid 2px red;
+    background-color: red;
+    color:white;
 }
 
 .pieceSelected{
@@ -221,7 +228,6 @@ button{
 
 #guidon{
     position:absolute;
-    z-index: -1;
     left:150px;
     height: 180px;
     width: 180px;
@@ -238,7 +244,6 @@ button{
 
 #roueD{
     position:absolute;
-    z-index: -1;
     left:180px;
     height: 200px;
     width: 200px;
@@ -323,7 +328,9 @@ button{
     padding: 15px;
     border: 1px solid #888;
     height: 100%;
+    width: 100%;
     overflow:auto;
+    
 }
 
 .popup-content h1{

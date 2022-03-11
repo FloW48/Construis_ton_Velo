@@ -9,7 +9,8 @@ const veloSchema = new Schema({
     id_plateau: Number,
     id_selle : Number,
     nom: String,
-    prix: Number
+    prix: Number,
+    isBought: Boolean
 });
 
 const Velo = mongoose.model('Velo', veloSchema);
