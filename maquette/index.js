@@ -283,6 +283,8 @@ io.on('connection', function (socket) {
     });
 
     socket.on("sauvegarder", async (infosFacture)=> {
+        console.log(infosFacture)
+
         let info = [];
         let velo=infosFacture.veloPieces
         let total = 0;
@@ -295,7 +297,6 @@ io.on('connection', function (socket) {
             let imageBase64=await base64Image(velo[i].image)
             info.push({'nom':nom,'prix':prix,'lien':lien,'imageBase64':imageBase64});
         }
-        
         info.push(total);   //Index 5: Prix total
         info.push(infosFacture.autresInfos) //Index 6: autres infos: nomVelo et nomClient
 
@@ -340,8 +341,6 @@ io.on('connection', function (socket) {
             let titreVelo="Votre vélo \""+datas.data[6].nomVelo+"\""
             let nomClient=datas.data[6].nomClient
 
-            console.log(datas)
-
             var doc = {
                 content: [
                     { text : 'Nom du site',style: 'nosCoords'},
@@ -367,32 +366,30 @@ io.on('connection', function (socket) {
                             ],
                         },
                     },
-                    {table: {
-                        body: [
-                            [{
-                                image: datas.data[0].imageBase64,
-                                fit: [100, 100],
-                            },
-                            {
-                                image: datas.data[1].imageBase64,
-                                fit: [100, 100],
-                            },
-                            {
-                                image: datas.data[2].imageBase64,
-                                fit: [100, 100],
-                            },
-                            {
-                                image: datas.data[3].imageBase64,
-                                fit: [100, 100],
-                            },
-                            {
-                                image: datas.data[4].imageBase64,
-                                fit: [100, 100],
-                            },
+                    {
+                        columns: [
+                          {
+                            image: datas.data[0].imageBase64,
+                            width: 100
+                          },
+                          {
+                            image: datas.data[1].imageBase64,
+                            width: 100
+                          },
+                          {
+                            image: datas.data[2].imageBase64,
+                            width: 100
+                          },
+                          {
+                            image: datas.data[3].imageBase64,
+                            width: 100
+                          },
+                          {
+                            image: datas.data[4].imageBase64,
+                            width: 100
+                          }
                         ],
-                        ]
-                      },
-                      layout: 'noBorders'
+                        columnGap: 10
                     },
                 ],
                 styles: {
