@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             body: JSON.stringify( params )  
         };
 
-        await fetch( 'http://localhost:8080/api/utilisateur/registerUtilisateur', options )
+        await fetch( '/api/utilisateur/registerUtilisateur', options )
             .then( response => response.json() )
             .then( response => {
                 console.log(response)

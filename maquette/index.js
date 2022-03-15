@@ -10,6 +10,7 @@ var http = require('http');
 var {Base64Encode} = require('base64-stream');
 const Pdfmake = require('pdfmake');
 var fs = require('fs');
+var portfinder = require('portfinder');
 
 var fonts = {
     Roboto: {
@@ -45,9 +46,15 @@ const EquipementRoute = require('./database/equipementRoute')
 const VeloRoute = require('./database/veloRoute')
 const UtilisateurRoute = require('./database/utilisateurRoute')
 
-server.listen(8080, function() {
-    console.log("C'est parti ! En attente de connexion sur le port 8080...");
-});
+let domain="http://localhost:"
+portfinder.getPort(function (err, port) {
+    domain+=port
+    server.listen(port, function() {
+        console.log("C'est parti ! En attente de connexion sur le port " + port);
+    });
+  });
+
+
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
@@ -75,7 +82,8 @@ var mongoose = require('mongoose');
 const { setgroups } = require('process');
 const { isDeepStrictEqual } = require('util');
 
-mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
+//mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
+mongoose.connect('mongodb+srv://projetl3velo:VxWuKP9w5MFT7U%40@cluster0.t5na3.mongodb.net/creerTonVelo?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
 const { Schema } = mongoose;
 //Get the default connection
@@ -84,39 +92,6 @@ var db = mongoose.connection;
 //Bind connection to error event (to get notification of connection errors)
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-
-//Fonction qui importe dans la BD les données prédéfinies dans le fichier 'dataPreset.json'
-//Elle est appelée lors du clique sur le bouton 'IMPORTER DONNEES' sur la page principale
-//  /!\ Supprime toutes les données déjà présentes dans la BD /!\
-app.get('/importDataPreset', async function(req, res) {
-    var dataPreset = require('./dataPreset.json') //Données prédéfinies à charger
-
-    await fetch('http://localhost:8080/api/equipement/deleteAll');  //Supprime tous les éléments présents dans la collection 'Equipement'
-
-    let index=0;
-
-    dataPreset.forEach(function(element){
-        let piece = {
-            _id: index,
-            id_partie: element.id_partie,
-            nom: element.nom,
-            prix: element.prix,
-            lien: element.lien,
-            image: element.image,
-            carbone: element.carbone
-        };
-        console.log(piece)
-        
-        fetch('http://localhost:8080/api/equipement/newEquipement', {
-            method: 'POST',
-            body: JSON.stringify(piece),
-            headers: { 'Content-Type': 'application/json' }
-        }).then(res => res.json())
-          .then(json => console.log(json));
-          
-        index ++;
-    });
-  });
 
 
 var index=0;    //ID pour les éléménts de la BD
@@ -172,7 +147,8 @@ async function scrapeElements2(url,id_partie){
             carbone: 50
         };
         
-        fetch('http://localhost:8080/api/equipement/newEquipement', {
+        let fetch_url=domain+'/api/equipement/newEquipement'
+        fetch(fetch_url, {
             method: 'POST',
             body: JSON.stringify(piece),
             headers: { 'Content-Type': 'application/json' }
@@ -248,7 +224,9 @@ async function scrapeElements(url, id_partie){
             carbone: 50
         };
         
-        fetch('http://localhost:8080/api/equipement/newEquipement', {
+        let fetch_url=domain+'/api/equipement/newEquipement'
+
+        fetch(fetch_url, {
             method: 'POST',
             body: JSON.stringify(piece),
             headers: { 'Content-Type': 'application/json' }
@@ -259,7 +237,9 @@ async function scrapeElements(url, id_partie){
 }
 
 async function scrapAll(){
-    await fetch('http://localhost:8080/api/equipement/deleteAll');  //Supprime tous les éléments présents dans la collection 'Equipement'
+    let fetch_url=domain+'/api/equipement/deleteAll'
+
+    await fetch(fetch_url);  //Supprime tous les éléments présents dans la collection 'Equipement'
     await scrapeElements(URLCadres,1);
     await scrapeElements(URLPneus,2);
     await scrapeElements(URLGuidons,3);

@@ -128,8 +128,6 @@ button{
 }
 
 .monVeloInfos td{
-    border-left: solid 2px red;
-    border-right: solid 2px red;
     height: 50px;
     width: 250px;
     margin:5px;
@@ -147,6 +145,7 @@ button{
 .monVeloInfos .bottom{
     border-top:solid 2px red;
     font-weight: bold;
+    font-size: 25px;
 }
 
 .monVeloInfos .bottom button{
@@ -163,24 +162,63 @@ button{
 .pieceSelected{
     width:90%;
     border: solid 2px black;
+    border-radius: 7px;
     font-size: 15px;
     margin: 15px auto;
     transition: background-color 500ms;
 }
 
-.pieceSelected table, .pieceSelected tr:first-child, .pieceSelected td{
+.pieceSelected h1, .piecePopup h1{
+    font-style: italic;
+    font-weight: bold;
+    height: 50px;
+    margin:2px 2px;
+    font-size: 15px;
+    line-height: 15px;
+}
+
+.pieceSelected table, .pieceSelected tr:first-child, .pieceSelected td, .piecePopup table, .piecePopup tr:first-child, .piecePopup td{
     border:none;
-    font-weight: normal;
-    font-size: inherit;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.pieceSelected button, .piecePopup button{
+    font-size: 25px;
+    font-weight: lighter;
+    border: solid 1px black;
+}
+
+#infoSite{
+    position:relative;
+    width: 150px;
+    height: 25px;
+    font-size: 15px;
+    background-color: white;
+    margin:2px auto;
+    border-radius: 5px;
+    border: solid 1px black;
+    line-height: 25px;
+    transition: background-color 500ms;
+    transition: color 500ms;
+}
+
+#infoSite:hover{
+    background-color:rgba(0,0,0);
+    color:white;
+}
+
+#infoSite a{
+    text-decoration: inherit;
+    color:inherit;
 }
 
 .pieceSelected:hover{
-    background-color:rgba(255,0,0,0.25);
+    background-color:rgba(255,0,0,0.75);
 }
 
-.pieceSelected img{
-    background-color: red;
-    border: solid 2px red;
+.pieceSelected img, .piecePopup img{
+    border-radius: 7px;
     width: 100px;
     height: 100px;
     margin: 10px auto;
@@ -337,6 +375,7 @@ button{
     margin:5px;
     font-size: 22px;
     font-weight: bold;
+    font-style: italic;
 }
 
 #closePopup {
@@ -366,7 +405,7 @@ button{
 }
 
 .piecePopup:hover{
-    background-color:rgba(255,0,0,0.25);
+    background-color:rgba(255,0,0,0.75);
 }
 
 .piecePopup h1{
@@ -375,13 +414,6 @@ button{
     text-align: center;
 }
 
-.piecePopup img{
-    width:100px;
-    height: 100px;
-    margin: 10px auto;
-    display: block;
-    border: solid 2px red;
-}
 .piecePopup table{
     font-size:12px;
 }
@@ -401,10 +433,20 @@ button{
 
 .errMsg{
     color:red;
+
+    position: absolute;
+    bottom:35px;
+    left: 0;
+    right: 0;
+
+    width:350px;
+
+    margin:auto;
     font-weight: bold;
     text-align: center;
     margin-top: 10px;
     font-size: 20px;
+    border-radius: 3px;
 }
 
 .vosVelos{

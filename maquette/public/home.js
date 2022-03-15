@@ -36,13 +36,21 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (localStorage.getItem("isConnected") !== null) {
         document.getElementById("btnLogIn").remove()
         document.getElementById("btnRegister").remove()
-        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userID").toUpperCase()
+        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userNom").toUpperCase()
     }else{
         document.getElementById("btnLogOut").remove()
         document.getElementById("btnMesVelos").remove()
+        document.getElementsByClassName("bottom")[1].innerHTML="Veuillez vous <a href=\"./connexion.html\">connecter</a> ou <a href=\"./enregistrement.html\">créer un compte</a> pour pouvoir sauvegarder ce vélo"
     }
 
-    
+    //Cache le bouton 'Site source' en cas d'un clique autre part sur la page
+    document.body.addEventListener("click",function(){
+        let infoSite=document.getElementById("infoSite")
+        if(typeof(infoSite) != 'undefined' && infoSite != null){
+            infoSite.remove()
+        }
+    })
+
     //Charge les données du Local storage
     function load(){
         if(JSON.parse(localStorage.getItem("savePieces"))!=null){
@@ -156,7 +164,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         
         popupPiece.style.display = "block";
 
-        var fetch_url="http://localhost:8080/api/equipement/showPieces?pieceID="+idpiece
+        var fetch_url="/api/equipement/showPieces?pieceID="+idpiece
 
         switch(idpiece){
             case "1":
@@ -235,62 +243,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 piecePopup.classList.add("selected");
             }*/
 
-            //NOM PIECE
-            let nom_article=document.createElement("h1");
-            nom_article.textContent=element.nom;
-            piecePopup.appendChild(nom_article);
-            
-            //IMAGE
-            let img=document.createElement("img")
-            img.src=element.image                                //LIEN DE L'IMAGE
-            piecePopup.appendChild(img)
-
-            let table=document.createElement("table");
-            
-            //LIGNE PRIX
-            let trPrice=document.createElement('tr');
-
-            let price=document.createElement('td');
-            price.textContent="Prix";
-            trPrice.appendChild(price);
-
-            let priceValue=document.createElement('td');
-            priceValue.textContent=element.prix+'\u20AC';
-            trPrice.appendChild(priceValue);
-
-            table.appendChild(trPrice);
-
-            //LIGNE SITE SOURCE
-            let trSite=document.createElement('tr');
-
-            let site=document.createElement('td');
-            site.textContent="Site source";
-            trSite.appendChild(site);
-
-            let siteValue=document.createElement('td');
-            let siteA=document.createElement('a');
-            siteA.setAttribute("href", element.lien)
-            siteA.setAttribute("target", "blank")
-            siteA.textContent=element.lien;
-            siteValue.appendChild(siteA);
-            trSite.appendChild(siteValue);
-
-            table.appendChild(trSite);
-
-            //LIGNE EMISSION CARBONE
-            let trCarbone=document.createElement('tr');
-
-            let carbone=document.createElement('td');
-            carbone.textContent="Emission carbone";
-            trCarbone.appendChild(carbone);
-
-            let carboneValue=document.createElement('td');
-            carboneValue.textContent=element.carbone;
-            trCarbone.appendChild(carboneValue);
-
-            table.appendChild(trCarbone);
-
-            piecePopup.appendChild(table)
+            showInfosPiece(piecePopup,element)
 
             document.getElementsByClassName("popup-content")[0].appendChild(piecePopup)
         })
@@ -305,31 +258,24 @@ document.addEventListener("DOMContentLoaded", async function () {
         popupPiece.style.display = "none";
     }
 
-    function showCurrentPiece(idpiece){
-        let pieceSelected = document.getElementsByClassName("showPiece")[idpiece-1].firstElementChild;
-        pieceSelected.textContent="";
-
+    function showInfosPiece(parentElement,infosPiece){
         //NOM PIECE
         let nom_article=document.createElement("h1");
-        nom_article.textContent=pieces_selectionnees[idpiece-1].nom;
-        pieceSelected.appendChild(nom_article);
+        nom_article.textContent=infosPiece.nom;
+        parentElement.appendChild(nom_article);
         
         //IMAGE
         let img=document.createElement("img")
-        img.src=pieces_selectionnees[idpiece-1].image                                //LIEN DE L'IMAGE
-        pieceSelected.appendChild(img)
+        img.src=infosPiece.image                                //LIEN DE L'IMAGE
+        parentElement.appendChild(img)
 
         let table=document.createElement("table");
         
         //LIGNE PRIX
         let trPrice=document.createElement('tr');
 
-        let price=document.createElement('td');
-        price.textContent="Prix";
-        trPrice.appendChild(price);
-
         let priceValue=document.createElement('td');
-        priceValue.textContent=pieces_selectionnees[idpiece-1].prix+'\u20AC';
+        priceValue.textContent=infosPiece.prix+'\u20AC';
         trPrice.appendChild(priceValue);
 
         table.appendChild(trPrice);
@@ -337,34 +283,41 @@ document.addEventListener("DOMContentLoaded", async function () {
         //LIGNE SITE SOURCE
         let trSite=document.createElement('tr');
 
-        let site=document.createElement('td');
-        site.textContent="Site source";
-        trSite.appendChild(site);
-
         let siteValue=document.createElement('td');
-        let siteA=document.createElement('a');
-        siteA.setAttribute("href", pieces_selectionnees[idpiece-1].lien)
-        siteA.setAttribute("target", "blank")
-        siteA.textContent=pieces_selectionnees[idpiece-1].lien;
-        siteValue.appendChild(siteA);
+        let btnInfoSite=document.createElement('button')
+        btnInfoSite.innerHTML="🛈"
+        btnInfoSite.addEventListener("click", function(e){
+            
+            let infoSite=document.getElementById("infoSite")
+            if(typeof(infoSite) != 'undefined' && infoSite != null){
+                infoSite.remove()
+            }
+
+            e.stopPropagation()
+            
+            infoSite=document.createElement("div")
+            infoSite.setAttribute("id","infoSite")
+            infoSite.innerHTML="<a href=\""+infosPiece.lien+"\" target=\"_blank\">Site source</a>"
+            
+            infoSite.addEventListener("click", function(e){ //Empêche d'ouvrir la sélection de pièce lors du clique sur le lien source
+                e.stopPropagation()         
+            })
+
+            e.target.parentNode.appendChild(infoSite)
+        })
+        siteValue.appendChild(btnInfoSite)
+
         trSite.appendChild(siteValue);
 
-        table.appendChild(trSite);
+        table.appendChild(trSite)
 
-        //LIGNE EMISSION CARBONE
-        let trCarbone=document.createElement('tr');
+        parentElement.appendChild(table)
+    }
 
-        let carbone=document.createElement('td');
-        carbone.textContent="Emission carbone";
-        trCarbone.appendChild(carbone);
-
-        let carboneValue=document.createElement('td');
-        carboneValue.textContent=pieces_selectionnees[idpiece-1].carbone;
-        trCarbone.appendChild(carboneValue);
-
-        table.appendChild(trCarbone);
-
-        pieceSelected.appendChild(table)
+    function showCurrentPiece(idpiece){
+        let pieceSelected = document.getElementsByClassName("showPiece")[idpiece-1].firstElementChild;
+        pieceSelected.textContent="";
+        showInfosPiece(pieceSelected,pieces_selectionnees[idpiece-1])
     }
 
 
@@ -392,7 +345,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         var data;
 
         for(let i=1;i<6;i++){
-            fetch_url="http://localhost:8080/api/equipement/findMinPrice?pieceID="+i
+            fetch_url="/api/equipement/findMinPrice?pieceID="+i
             pieceMinPrice= await fetch(fetch_url);
             data = await pieceMinPrice.json();
 
@@ -431,74 +384,78 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     load()
 
-    //Bouton déconnexion
-    document.getElementById("btnLogOut").addEventListener("click", function(){
-        localStorage.removeItem("isConnected")
-        window.location.reload()
-    })
+   
+    //Gestion des boutons visibles seulement si l'utilisateur est connecté
+    if (localStorage.getItem("isConnected") !== null) {
+        //Bouton déconnexion
+        document.getElementById("btnLogOut").addEventListener("click", function(){
+            localStorage.removeItem("isConnected")
+            window.location.reload()
+        })
 
-    //Bouton 'Sauvegarder'
-    document.getElementById("saveVelo").addEventListener("click", async function(){
-        let nomVelo=document.getElementById("nomVelo").value
+        //Bouton 'Sauvegarder'
+        document.getElementById("saveVelo").addEventListener("click", async function(){
+            let nomVelo=document.getElementById("nomVelo").value
 
-        let msgErreur=document.getElementsByClassName("errMsg")[0]
+            let msgErreur=document.getElementsByClassName("errMsg")[0]
 
-        if(!isVeloComplet()){
-            msgErreur.innerHTML="Votre vélo n'est pas complet."
+            if(!isVeloComplet()){
+                msgErreur.innerHTML="Votre vélo n'est pas complet."
+                
+                setTimeout(function() {
+                    msgErreur.innerHTML = ""
+                }, 3000)
+
+                return
+            }
             
+            if (nomVelo.trim()==""){
+                msgErreur.innerHTML="Le nom de votre vélo ne doit pas être vide."
+
+                setTimeout(function() {
+                    msgErreur.innerHTML = ""
+                }, 3000)
+
+                return
+            }
+
+            const params = {
+                id_owner: localStorage.getItem("userID"),
+                id_cadre: pieces_selectionnees[0]._id,
+                id_pneus: pieces_selectionnees[1]._id,
+                id_guidon: pieces_selectionnees[2]._id,
+                id_plateau: pieces_selectionnees[3]._id,
+                id_selle: pieces_selectionnees[4]._id,
+                nom: nomVelo,
+                prix: updatePrice()
+            };
+            const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( params )  
+            };
+
+            await fetch('/api/velo/newVelo', options )
+                .then( response => response.json() )
+                .then( response => {
+                    console.log(response)
+
+                } );
+            
+                console.log(params)
+
+            //Message de confirmation de la sauvegarde du vélo
+            msgErreur.style.color = 'green';
+            msgErreur.innerHTML="Vélo sauvegardé!"
             setTimeout(function() {
+                msgErreur.style.color = 'red';
                 msgErreur.innerHTML = ""
-              }, 3000)
+            }, 3000)
 
-            return
-        }
-        
-        if (nomVelo.trim()==""){
-            msgErreur.innerHTML="Le nom de votre vélo ne doit pas être vide."
-
-            setTimeout(function() {
-                msgErreur.innerHTML = ""
-              }, 3000)
-
-            return
-        }
-
-        const params = {
-            id_owner: localStorage.getItem("userID"),
-            id_cadre: pieces_selectionnees[0]._id,
-            id_pneus: pieces_selectionnees[1]._id,
-            id_guidon: pieces_selectionnees[2]._id,
-            id_plateau: pieces_selectionnees[3]._id,
-            id_selle: pieces_selectionnees[4]._id,
-            nom: nomVelo,
-            prix: updatePrice()
-        };
-        const options = {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify( params )  
-        };
-
-        await fetch( 'http://localhost:8080/api/velo/newVelo', options )
-            .then( response => response.json() )
-            .then( response => {
-                console.log(response)
-
-            } );
-        
-            console.log(params)
-
-        //Message de confirmation de la sauvegarde du vélo
-        msgErreur.style.color = 'green';
-        msgErreur.innerHTML="Vélo sauvegardé!"
-        setTimeout(function() {
-            msgErreur.style.color = 'red';
-            msgErreur.innerHTML = ""
-          }, 3000)
-
-    })
+        })
+    }
 
     //Réception du chemin du PDF de la facture et ouverture dans une autre fenêtre du PDF
     socket.on("pdfPath",(nom_pdf)=>{

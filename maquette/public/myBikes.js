@@ -4,6 +4,15 @@ document.addEventListener("DOMContentLoaded", async function () {
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
 
+    //Cache le bouton 'Site source' en cas d'un clique autre part sur la page
+    document.body.addEventListener("click",function(){
+        let infoSite=document.getElementById("infoSite")
+        if(typeof(infoSite) != 'undefined' && infoSite != null){
+            infoSite.remove()
+        }
+    })
+
+    //Ferme la fenêtre popup en cas de clique sur le bouton pour la fermer
     closePopup.onclick = function() {
         popupPiece.style.display = "none";
     }
@@ -24,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         bikeList.setAttribute("id","bikeList")
         document.body.appendChild(bikeList)
 
-        var fetch_url="http://localhost:8080/api/velo/showVelosOfUser?userID="+localStorage.getItem("userID")
+        var fetch_url="/api/velo/showVelosOfUser?userID="+localStorage.getItem("userID")
 
         var velosUser= await fetch(fetch_url);
         var data = await velosUser.json();
@@ -108,7 +117,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             
 
             for(let i=0;i<5;i++){
-                var fetch_url="http://localhost:8080/api/equipement/showPiece?pieceID="+idpieces_velo[i]
+                var fetch_url="/api/equipement/showPiece?pieceID="+idpieces_velo[i]
 
                 var piece= await fetch(fetch_url);
                 var data = await piece.json();
@@ -146,7 +155,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             btnSupprimerVelo.classList.add("supprimerVelo")
             btnSupprimerVelo.addEventListener("click",async(event)=>{
                 console.log("supprimer velo", velo._id)
-                var fetch_url="http://localhost:8080/api/velo/deleteOne?veloID="+velo._id
+                var fetch_url="/api/velo/deleteOne?veloID="+velo._id
                 var res= await fetch(fetch_url);
                 var data = await res.json();
 
@@ -170,7 +179,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 btnAcheterVelo.classList.add("acheterVelo")
                 btnAcheterVelo.addEventListener("click",async(event)=>{
                     console.log("acheter velo", velo._id)
-                    var fetch_url="http://localhost:8080/api/velo/acheterVelo?veloID="+velo._id
+                    var fetch_url="/api/velo/acheterVelo?veloID="+velo._id
                     var res= await fetch(fetch_url);
                     var data = await res.json();
 
@@ -308,7 +317,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 * num_piece: Type de piece (0: Cadre, 1: Pneu, 2: Guidon, 3: Plateau, 4: Selle)
 */
 async function displayPiece(id_piece, num_velo, num_piece){
-    var fetch_url="http://localhost:8080/api/equipement/showPiece?pieceID="+id_piece
+    var fetch_url="/api/equipement/showPiece?pieceID="+id_piece
 
     var piece= await fetch(fetch_url);
     var data = await piece.json();
@@ -333,10 +342,6 @@ async function displayPiece(id_piece, num_velo, num_piece){
     //LIGNE PRIX
     let trPrice=document.createElement('tr');
 
-    let price=document.createElement('td');
-    price.textContent="Prix";
-    trPrice.appendChild(price);
-
     let priceValue=document.createElement('td');
     priceValue.textContent=infos_piece.prix+'\u20AC';
     trPrice.appendChild(priceValue);
@@ -346,33 +351,35 @@ async function displayPiece(id_piece, num_velo, num_piece){
     //LIGNE SITE SOURCE
     let trSite=document.createElement('tr');
 
-    let site=document.createElement('td');
-    site.textContent="Site source";
-    trSite.appendChild(site);
-
     let siteValue=document.createElement('td');
-    let siteA=document.createElement('a');
-    siteA.setAttribute("href", infos_piece.lien)
-    siteA.setAttribute("target", "blank")
-    siteA.textContent=infos_piece.lien;
-    siteValue.appendChild(siteA);
+    let btnInfoSite=document.createElement('button')
+    btnInfoSite.innerHTML="🛈"
+    btnInfoSite.addEventListener("click", function(e){
+        
+        let infoSite=document.getElementById("infoSite")
+        if(typeof(infoSite) != 'undefined' && infoSite != null){
+            infoSite.remove()
+        }
+
+        e.stopPropagation()
+        
+        infoSite=document.createElement("div")
+        infoSite.setAttribute("id","infoSite")
+        infoSite.innerHTML="<a href=\""+infos_piece.lien+"\" target=\"_blank\">Site source</a>"
+        
+        infoSite.addEventListener("click", function(e){ //Empêche d'ouvrir la sélection de pièce lors du clique sur le lien source
+            e.stopPropagation()         
+        })
+
+        e.target.parentNode.appendChild(infoSite)
+    })
+    siteValue.appendChild(btnInfoSite)
+
     trSite.appendChild(siteValue);
 
     table.appendChild(trSite);
 
-    //LIGNE EMISSION CARBONE
-    let trCarbone=document.createElement('tr');
-
-    let carbone=document.createElement('td');
-    carbone.textContent="Emission carbone";
-    trCarbone.appendChild(carbone);
-
-    let carboneValue=document.createElement('td');
-    carboneValue.textContent=infos_piece.carbone;
-    trCarbone.appendChild(carboneValue);
-
-    table.appendChild(trCarbone);
-
+    
     pieceSelected.appendChild(table)
     let td=document.createElement("td")
     td.appendChild(pieceSelected)
