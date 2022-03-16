@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (localStorage.getItem("isConnected") !== null) {
         document.getElementById("btnLogIn").remove()
         document.getElementById("btnRegister").remove()
-        document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userNom").toUpperCase()
+        //document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userNom").toUpperCase()
     }else{
         document.getElementById("btnLogOut").remove()
         document.getElementById("btnMesVelos").remove()
