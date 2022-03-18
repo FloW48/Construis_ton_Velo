@@ -24,9 +24,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         document.body.appendChild(errMsg)
         
     }else{
-        let vosVelos=document.createElement("div")
-        vosVelos.classList.add("vosVelos")
-        vosVelos.innerHTML="Vos vélos: "
+        let vosVelos=document.createElement("h2")
+        vosVelos.innerHTML="Vos vélos :"
         document.body.appendChild(vosVelos)
 
         let bikeList=document.createElement("div")

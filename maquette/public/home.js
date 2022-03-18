@@ -186,7 +186,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 nom_piece="{inconnu}"
         }
 
-        let titrePopup=document.createElement("h1");
+        let titrePopup=document.createElement("h2");
         titrePopup.textContent="Liste des " + nom_piece + " disponibles :"
         popupcontent.appendChild(titrePopup)
 

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Home</title>
+    <title>MakeYourBMX</title>
     <link rel="stylesheet" type="text/css" href="styles/main.css">
+    <link rel="icon" type="image/x-icon" href="./images/site/logo_temp.png">
     <script src="./home.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 </head>
@@ -34,7 +35,7 @@
     </div>
 
     <div class="monVeloInfos">
-        <div class="titreSection">INFOS VELO</div>
+        <div class="titreSection">SÉLECTION DES PIÈCES</div>
         <table>
             <tr>
                 <td>CADRE <button class="delPiece" data-idpiece=1>❌</button></td>
@@ -72,7 +73,7 @@
             </tr>
         </table>
         <div class="bottom">
-            <button id="optPrix">Optimiser (prix)</button>
+            <button id="optPrix">Vélo le moins cher</button>
             <div id="prixTotal">
                 Prix total:
             </div>
@@ -80,7 +81,7 @@
     </div>
 
     <div class="monVeloImage">
-        <div class="titreSection">IMAGE VELO</div>
+        <div class="titreSection">VOTRE VÉLO</div>
         <div id="containerImage">
             <canvas id="cadre">
                 <img>

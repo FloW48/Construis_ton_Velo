@@ -4,10 +4,11 @@
 */
 
 :root {
-    --red:rgb(211, 0, 0);
+    --red:rgb(158, 0, 0); /*Couleur rouge principale du site*/
+    --red-hover: rgb(255, 104, 104);
 }
 
-@font-face {
+@font-face {        /*Police d'écriture du site*/
     font-family: 'geomanistregular';
     src: url('./fonts/Geomanist-Regular-Webfont/geomanist-regular-webfont.eot');
     src: url('./fonts/Geomanist-Regular-Webfont/geomanist-regular-webfont.eot?#iefix') format('embedded-opentype'),
@@ -77,40 +78,41 @@ table{
     border-spacing: 0;
 }
 
-button, input[type="submit"]{
-    background-color:white;
-    cursor:pointer;
-    border: none;
-    border-radius:5px;
-    font-family: 'geomanistregular', Helvetica, sans-serif;
+a{
+    text-decoration: none;
 }
 
+/* TITRE PAGE MYBIKES ET TITRE SÉLECTION PIECE POPUP*/
+h2{
+    width: 450px;
+    
+    background-color: var(--red);
+    border-radius: 2px;
+    border-top:none;
+
+    margin:10px auto;
+    padding: 5px;
+
+    color:white;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+/* BANNIERE EN HAUT DU SITE */
 .top{
     position:relative;
     background-color: var(--red);
     height: 50px;
     border-bottom:solid 1px darkred;
-    line-height: 50px;
 }
 
-.top button{
-    position: relative;
-    border-bottom: solid white 2px;
-    border-radius: 0px;
-    top: 50%;
-    padding: 5px;
-    margin: 0 5px;
-    font-size: 19px;
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
-    background: linear-gradient(to left, var(--red) 50%, white 50%) right;
-    background-size: 201%;
+/* PARTIE INFERIEURE DES CADRES */
+.bottom{
+    background-color: var(--red);
     color:white;
-    transition: .25s ease-out;
-}
-
-.top a{
-    text-decoration: none;   
+    padding: 5px 0;
 }
 
 #nomSite{
@@ -120,25 +122,32 @@ button, input[type="submit"]{
     height: 40px;
     width: 250px;
     font-size:25px;
+    line-height: 50px;
     vertical-align: middle;
-    
 }
 
+/* LOGO DU SITE EN HAUT A DROITE */
 #logoSite{
     width:40px;
     height: 40px;
     vertical-align: middle;
     margin:5px;
     margin-top:1px;
+    transition: transform 750ms;
 }
 
+#logoSite:hover{
+    transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+}
+
+/* CADRE POUR LE CHOIX DES PIECES */
 .monVeloInfos{
     position:relative;
     margin:25px auto;
     margin-bottom: 75px;
     width: 80%;
     height:75%;
-
     line-height: 50px;
     text-align: center;
     
@@ -172,52 +181,37 @@ button, input[type="submit"]{
     font-size: 25px;
 }
 
-.bottom{
-    background-color: var(--red);
-    color:white;
-    padding: 5px 0;
-}
-
-.bottom button {
-    margin:5px;
-    border-bottom: solid 2px white;
-    border-radius: 0;
-    font-size: 18px;
-    background: linear-gradient(to left, var(--red) 50%, white 50%) right;
-    background-size: 200%;
-    color:white;
-    transition: .25s ease-out;
-}
-
-.bottom button:hover, .top button:hover{
-    background-position: left;
-    color:black;
-    border-radius: 2px;
-}
-
-.bottom a{
-    background-color: white;
-    border-radius: 2px;
-    padding:5px;
-    color:black;
-    text-decoration: none;
-}
-
 .monVeloInfos .infoAchat{
     border:solid 2px var(--red);
     background-color: var(--red);
     color:white;
 }
 
-.pieceSelected{
+/* PIECES ACTUELLEMENT CHOISIES + PIECES DANS LE POPUP AFFICHANT CELLES DISPONIBLES */
+.pieceSelected, .piecePopup{
     width:220px;
-    height: 300px;
+    height: 310px;
     border: solid 2px black;
     border-radius: 7px;
-    font-size: 15px;
-    margin: 15px auto;
+    background: linear-gradient(to left, white 50%, var(--red-hover) 50%) right;
+    background-size:200%;
     transition: 0.25s ease-out;
-    background-image: linear-gradient(135deg, white 60%, rgba(255, 0, 0, 0.452) 60.5%);
+}
+.piecePopup:hover, .pieceSelected:hover{
+    background-position: left;
+}
+
+.pieceSelected{
+    position: relative;
+    margin: 15px auto;
+    font-size: 15px;
+}
+
+.piecePopup{
+    display:inline-block;
+    margin:5px 5px;
+    overflow:auto;
+    cursor: pointer;
 }
 
 .pieceSelected h1, .piecePopup h1{
@@ -233,10 +227,61 @@ button, input[type="submit"]{
     border-bottom: solid black 2px;
 }
 
+/*Container principal popup*/
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 70%;
+    height: 60%; 
+
+}
+
+/*Contenu du popup*/
+.popup-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 15px;
+    border: 2px solid var(--red);
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+    overflow:auto;
+}
+
+/*Croix 'X' pour fermer popup*/
+#closePopup {
+    color: #000000;
+    position:absolute;
+    right:5px;
+    font-size: 35px;
+    font-weight: bold;
+  }
+  
+#closePopup:hover,
+#closePopup:focus {
+    color: #000;
+    cursor: pointer;
+}
+
+
+.piecePopup tr{
+    height:25px;
+}
+
+.piecePopup td {
+    width:200px;
+    text-align: center;
+}
+
 .pieceSelected table, .pieceSelected tr:first-child, .pieceSelected td, .piecePopup table, .piecePopup tr:first-child, .piecePopup td{
     border:none;
     font-weight: bold;
     font-size: 22px;
+    padding: 0;
 }
 
 .pieceSelected button, .piecePopup button{
@@ -245,45 +290,16 @@ button, input[type="submit"]{
     border: solid 1px black;
 }
 
-.pieceSelected:hover{
-    border: solid 2px var(--red);
-    width:230px;
-    height: 315px;
-}
-
 .pieceSelected img, .piecePopup img{
     border-radius: 7px;
     width: 100px;
     height: 100px;
     margin: 10px auto;
     display: block;
-    border: solid 2px var(--red);
 }
 
-#infoSite{
-    position:relative;
-    width: 150px;
-    height: 25px;
-    font-size: 15px;
-    background-color: white;
-    margin:2px auto;
-    border-radius: 2px;
-    border: solid 1px black;
-    line-height: 25px;
-    transition: background-color 500ms;
-    transition: color 500ms;
-}
 
-#infoSite:hover{
-    background-color:rgba(0,0,0);
-    color:white;
-}
-
-#infoSite a{
-    text-decoration: inherit;
-    color:inherit;
-}
-
+/* CADRE IMAGE DU VELO */
 .monVeloImage{
     position:relative;
     margin:15px auto;
@@ -297,9 +313,7 @@ button, input[type="submit"]{
 
     overflow:auto;
 }
-.monVeloImage button{
-    margin:5px;
-}
+
 
 .monVeloImage .bottom{
     position:absolute;
@@ -311,6 +325,15 @@ button, input[type="submit"]{
     text-align: center;
     line-height: 35px;
     color:white;
+}
+
+/* CANVAS AFFICHAGE DU VELO */
+#containerImage{
+    position: relative;
+    margin:auto;
+    margin-top:15px;
+    height: 200px;
+    width: 200px;
 }
 
 #cadre{
@@ -362,138 +385,27 @@ button, input[type="submit"]{
     top:210px;
 }
 
-
-#containerImage{
-    position: relative;
-    margin:auto;
-    margin-top:15px;
-    height: 200px;
-    width: 200px;
-}
-
-
-.piece{
-    position:relative;
-    margin:4px;
-}
-
-.selectionPieces{
-    width:350px;
-    height:75%;
-    float:left;
-    margin:15px;
-
-    line-height: 100px;
-    
-    border:solid 2px var(--red);
-    border-top-right-radius: 7px;
-    border-top:none;
-}
-
+/* TITRE DES CADRES */
 .titreSection{
     position:relative;
         
-    padding-left:5px;
+    margin:2px 0;
     height: 25px;
-
+    text-align: center;
     font-size: 20px;
     line-height: 25px;
     color:white;
-    text-align: left;
     font-weight: bold;
 
     border-radius: 0 5px 0 0;
     background-color:var(--red);
 }
 
-.popup {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 70%;
-    height: 60%; 
-    background-color: rgb(0,0,0,0.4);
-}
-
-.popup-content {
-    background-color: #fefefe;
-    margin: auto;
-    padding: 15px;
-    border: 1px solid #888;
-    height: 100%;
-    width: 100%;
-    overflow:auto;
-    
-}
-
-.popup-content h1{
-    margin:5px;
-    font-size: 22px;
-    font-weight: bold;
-    font-style: italic;
-}
-
-#closePopup {
-    color: #aaaaaa;
-    position:absolute;
-    right:5px;
-    font-size: 35px;
-    font-weight: bold;
-  }
-  
-#closePopup:hover,
-#closePopup:focus {
-    color: #000;
-    cursor: pointer;
-}
-
-.piecePopup{
-    display:inline-block;
-    width:20%;
-    height:55%;
-    margin:5px 5px;
-    border: solid 2px black;
-    border-radius: 5px;
-    overflow:auto;
-    cursor: pointer;
-    transition: background-color 500ms;
-}
-
-.piecePopup:hover{
-    background-color:rgba(255,0,0,0.75);
-}
-
-.piecePopup h1{
-    margin-top:10px;
-    font-size:15px;
-    text-align: center;
-}
-
-.piecePopup table{
-    font-size:12px;
-}
-
-.piecePopup tr{
-    height:25px;
-}
-
-.piecePopup td {
-    width:200px;
-    text-align: center;
-}
-
-.selected{
-    background-color: green;
-}
-
+/* MESSAGE D'ERREUR */
 .errMsg{
     color:red;
 
     position: absolute;
-    bottom:55px;
     left: 0;
     right: 0;
 
@@ -507,63 +419,169 @@ button, input[type="submit"]{
     border-radius: 2px;
 }
 
-.vosVelos{
-    width: 250px;
-    
-    background-color: var(--red);
-    border-radius: 2px;
-    border-top:none;
-
-    margin:10px auto;
-    padding: 5px;
-
-    color:white;
-    font-size: 25px;
-    font-weight: bold;
-    text-align: center;
+.log .errMsg{
+    bottom:92px;
 }
 
-.resumeVelo{
-    position:relative;
-    margin:15px auto;
-
-    height: 250px;
-    width: 80%;
-
-    border:solid 2px var(--red);
-    border-top-right-radius: 7px;
-    border-top:none;
-
-    overflow:auto;
+.monVeloImage .errMsg{
+    bottom:45px;
 }
 
+/* PAGES DE CONNEXION ET ENREGISTREMENT */
 .log{
     position: relative;
     text-align: center;
     margin: auto;
-    font-size: 25px;
+    font-size: 21px;
 }
 
-.log input[type="text"], input[type="password"]{
+
+/* BOUTONS, A[HREF] ET CHAMPS DE SAISIE */
+button, input[type="submit"]{
+    background-color:white;
+    cursor:pointer;
+    border: none;
+    border-radius:5px;
+    font-family: 'geomanistregular', Helvetica, sans-serif;
+}
+
+.top button{
+    position: relative;
+    border-bottom: solid white 2px;
+    border-radius: 0px;
+    top: 50%;
+    margin: 0 5px;
+    font-size: 19px;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    background: linear-gradient(to left, var(--red) 50%, white 50%) right;
+    background-size: 201%;
+    color:white;
+    transition: .25s ease-out;
+}
+
+input[type="text"], input[type="password"]{
     all:unset;
     font-size: 20px;
-    background-color: rgba(156, 156, 156, 0.25);
     border-radius: 2px 2px 0 0;
-    border-bottom: solid 2px var(--red);
     width:200px;
-    height: 28px;
+    height: 26px;
+}
+.log input[type="text"], input[type="password"]{
+    border-bottom: solid 2px var(--red);
+    background-color: rgba(156, 156, 156, 0.25);
+}
+
+.bottom input[type="text"]{
+    border-bottom: solid 2px white;
+}
+
+input[type="text"]:focus, input[type="password"]:focus{
+    background-color: rgba(163, 0, 0, 0.25);
 }
 
 .log a, .log input[type="submit"]{
     border-radius: 5px;
     padding:5px;
-    color:white;
+    margin:15px 0;
+    color:black;
     text-decoration: none;
-    background-color: var(--red);
+    border-bottom: solid black 2px;
+    border-radius: 0px;
+    background: linear-gradient(to left, white 50%, var(--red) 50%) right;
+    background-size: 200%;
+    transition: .25s ease-out;
 }
+
+.log a:hover, .log input[type="submit"]:hover{
+    background-position: left;
+    color:white;
+    border-color: var(--red);
+    border-radius: 2px;
+}
+
 
 form td, form input[type="submit"]{
     font-size: 22px;
     font-weight: normal;
     border-radius: 5px;
+}
+
+.bottom a {
+    padding: 0 5px;
+}
+
+.bottom button, .bottom a {
+    text-decoration: none;
+    margin:5px;
+    border-bottom: solid 2px white;
+    border-radius: 0;
+    font-size: 18px;
+    background: linear-gradient(to left, var(--red) 50%, white 50%) right;
+    background-size: 200%;
+    color:white;
+    transition: .25s ease-out;
+}
+
+.bottom button:hover, .top button:hover, .bottom a:hover{
+    background-position: left;
+    color:black;
+    border-radius: 2px;
+}
+
+/* Bouton infos site source pour chaque pièces */
+#infoSite{
+    position:relative;
+    width: 150px;
+    height: 25px;
+    font-size: 15px;
+    background-color: white;
+    margin:9px auto;
+    border-radius: 2px;
+    border: solid 1px black;
+    line-height: 25px;
+    transition: background-color 500ms;
+    transition: color 500ms;
+}
+
+#infoSite:hover{
+    background-color:rgba(0,0,0);
+    color:white;
+}
+
+#infoSite a{
+    color:black;
+    transition: 0.25s;
+}
+    
+#infoSite a:hover{
+    background-color: black;
+    color:white;
+}
+
+#infoSite::before{
+    content: ''; 
+    width: 0; 
+    height: 0; 
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 10px solid black;
+    position: absolute;
+    top: -10px;
+    left:61px; 
+}
+
+/*SCROLLBAR*/
+.popup ::-webkit-scrollbar {
+    width: 15px;
+}
+
+.popup ::-webkit-scrollbar-thumb {
+    background-color: var(--red);
+    border-radius: 2px;
+}
+
+.popup ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--red-hover);
+    cursor:pointer;
 }
