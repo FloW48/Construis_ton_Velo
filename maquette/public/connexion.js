@@ -1,9 +1,7 @@
 
 document.addEventListener("DOMContentLoaded", async function () {
     
-    
     let form=document.getElementById("form")
-
 
     form.addEventListener("submit", async function(event){
         event.preventDefault()
@@ -26,24 +24,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             .then( response => response.json() )
             .then( response => {
                 console.log(response)
-                if(response.err==1){
+                if(response.err!==0){
                     document.getElementsByClassName("errMsg")[0].innerHTML=response.message
                 }else{
-                    if(response.err==2){
-                        document.getElementsByClassName("errMsg")[0].innerHTML=response.message
-                    }else{
-                        localStorage.setItem("isConnected", "true");
-                        localStorage.setItem("userID", response.user._id)
-                        localStorage.setItem("userNom", response.user.nom)
-                        window.location.href = "..";
-                    }
+                    localStorage.setItem("isConnected", "true");
+                    localStorage.setItem("userID", response.user._id)
+                    localStorage.setItem("userNom", response.user.nom)
+                    window.location.href = "..";
                 }
-                
-
             } );
-            
-
-
-
         });
 });

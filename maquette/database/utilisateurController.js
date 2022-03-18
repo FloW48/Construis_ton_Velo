@@ -17,9 +17,9 @@ const showAll = (req, res) => {
 }
 
 const showUtilisateur = (req, res) => {
-    var nom = req.query.nom;
-
-    Utilisateur.find({"nom": nom})
+    var id = req.query.userID;
+    console.log(id)
+    Utilisateur.findById(id)
     .then(response => {
         res.json({
             response
@@ -43,9 +43,29 @@ const showMe = async (req, res) => {
 
 const registerUtilisateur = async (req, res, next) => {
     
+    if(!/^([a-zA-Z0-9]{3,12})$/.test(req.body.name)){
+        return res.json({
+            message: "Le format du nom d'utilisateur est incorrect.",
+            err:3
+        })
+    }
+    if(!/^([a-zA-Z0-9]{4,16})$/.test(req.body.password)){
+        return res.json({
+            message: "Le format du mot de passe est incorrect.",
+            err:4
+        })
+    }
+
     let utilisateur = new Utilisateur({
         nom: req.body.name,
-        password: req.body.password
+        password: req.body.password,
+        firstname:"",
+        lastname:"",
+        email: "",
+        tel:-1,
+        ville: "",
+        codepostal: -1,
+        rue: ""
     })
     
     try{
@@ -53,7 +73,7 @@ const registerUtilisateur = async (req, res, next) => {
         if(utilisateurExistant){
             return res.json({
                 err:1,
-                message: "Ce nom d'utilisateur est déjà utilisé"
+                message: "Ce nom d'utilisateur est déjà utilisé."
             })
         }
 
@@ -63,7 +83,7 @@ const registerUtilisateur = async (req, res, next) => {
         
         return res.json({
             err:0,
-            message: "Enregistrement OK"
+            message: "Enregistrement réussi."
         })
 
     }catch(erreur){
@@ -130,22 +150,58 @@ const deleteUtilisateur  = (req, res, next) => {
     })
 }
 
-const updateUtilisateur = (req, res , next) => {
-    let nom = req.body.nom
+const updateUtilisateur = async (req, res , next) => {
+    let id=req.body.userID
+
+    let tel=-1
+    let codepostal=-1
+
+    if(req.body.tel!=='' && /^([0-9]{1,10})$/.test(req.body.tel)){    //Verification telephone non vide et seulement composé de numéro
+        tel=req.body.tel
+    }
+    if(req.body.codepostal!=='' && /^([0-9]{1,10})$/.test(req.body.codepostal)){
+        codepostal=req.body.codepostal
+    }
+    
+    if(!/^([a-zA-Z0-9]{3,12})$/.test(req.body.nom)){
+        return res.json({
+            message: "Le format du nom d'utilisateur est incorrect.",
+            err:2
+        })
+    }
 
     let updatedUtilisateur = {
         nom: req.body.nom,
+        firstname:req.body.firstname,
+        lastname:req.body.lastname,
         email: req.body.email,
-        password: req.body.password
+        tel: tel,
+        ville: req.body.ville,
+        codepostal: codepostal,
+        rue: req.body.rue
     }
 
-    Utilisateur.findOneAndUpdate({nom:nom}, {$set: updatedUtilisateur}).then(()=>{
+    //Si le mot de passe est renseigné
+    if(req.body.password!==''){
+        if(!/^([a-zA-Z0-9]{4,16})$/.test(req.body.password)){
+            return res.json({
+                message: "Le format du mot de passe est incorrect.",
+                err:3
+            })
+        }
+        const salt = await bcrypt.genSalt(10);
+        updatedUtilisateur.password = await bcrypt.hash(req.body.password, salt);
+    }
+
+    Utilisateur.findByIdAndUpdate(id, {$set: updatedUtilisateur}).then(()=>{
         res.json({
-            message: "User updated successfully"
+            message: "Votre compte a bien été mis à jour.",
+            err:0
         })
     }).catch(()=>{
         res.json({
-            message: "Error on update"
+            message: "updateUtilisateur: Une erreur est survenue.",
+            err:1
         })
     })
 

@@ -182,7 +182,6 @@ h2{
 }
 
 .monVeloInfos .infoAchat{
-    border:solid 2px var(--red);
     background-color: var(--red);
     color:white;
 }
@@ -420,7 +419,8 @@ h2{
 }
 
 .log .errMsg{
-    bottom:92px;
+    position: relative;
+    margin: 2px auto;
 }
 
 .monVeloImage .errMsg{
@@ -460,14 +460,14 @@ button, input[type="submit"]{
     transition: .25s ease-out;
 }
 
-input[type="text"], input[type="password"]{
+input[type="text"], input[type="password"], input[type="email"], input[type="tel"]{
     all:unset;
     font-size: 20px;
     border-radius: 2px 2px 0 0;
     width:200px;
     height: 26px;
 }
-.log input[type="text"], input[type="password"]{
+.log input[type="text"], input[type="password"], input[type="email"], input[type="tel"]{
     border-bottom: solid 2px var(--red);
     background-color: rgba(156, 156, 156, 0.25);
 }
@@ -476,7 +476,7 @@ input[type="text"], input[type="password"]{
     border-bottom: solid 2px white;
 }
 
-input[type="text"]:focus, input[type="password"]:focus{
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="tel"]:focus{
     background-color: rgba(163, 0, 0, 0.25);
 }
 
@@ -505,6 +505,15 @@ form td, form input[type="submit"]{
     font-size: 22px;
     font-weight: normal;
     border-radius: 5px;
+}
+
+form td:nth-child(3){
+    border-bottom:solid black 1px;
+    border-top:solid black 1px;
+    font-size:12px;
+    line-height: 14px;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .bottom a {

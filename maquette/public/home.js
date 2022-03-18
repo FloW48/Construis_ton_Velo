@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     }else{
         document.getElementById("btnLogOut").remove()
         document.getElementById("btnMesVelos").remove()
+        document.getElementById("btnMonCompte").remove()
         document.getElementsByClassName("bottom")[1].innerHTML="Veuillez vous <a href=\"./connexion.html\">connecter</a> ou <a href=\"./enregistrement.html\">créer un compte</a> pour pouvoir sauvegarder ce vélo"
     }
 

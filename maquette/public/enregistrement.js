@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             .then( response => response.json() )
             .then( response => {
                 console.log(response)
-                if(response.err==1){
+                if(response.err!==0){
                     document.getElementsByClassName("errMsg")[0].innerHTML=response.message
                 }else{    
                     window.location.href = "../connexion.html";
