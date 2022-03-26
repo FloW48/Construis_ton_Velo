@@ -1,16 +1,26 @@
-
 document.addEventListener("DOMContentLoaded", async function () {
     
+    //Vérifie si l'utilisateur est connecté ou non
+    if (localStorage.getItem("isConnected") !== null) {
+        let cadre=document.getElementsByClassName("log")[0]
+        cadre.innerHTML=""
+
+        let errMsg=document.createElement("div")
+        errMsg.classList.add("errMsg")
+        errMsg.innerHTML="Vous êtes déjà connecté !"
+        cadre.appendChild(errMsg)
+        
+        return
+    }
     
     let form=document.getElementById("form")
-
 
     form.addEventListener("submit", async function(event){
         event.preventDefault()
         const formData = new FormData(event.target);
         const formValues = Object.fromEntries(formData);    //Récuperer les valeurs du formulaire
     
-        const params = {
+        const params = {             //Paramètres à transmettre pour la requête POST
             name: formValues.nom,
             password: formValues.password 
         };
@@ -26,16 +36,11 @@ document.addEventListener("DOMContentLoaded", async function () {
             .then( response => response.json() )
             .then( response => {
                 console.log(response)
-                if(response.err!==0){
+                if(response.err!==0){   //Si erreur, affichage d'un message d'erreur
                     document.getElementsByClassName("errMsg")[0].innerHTML=response.message
-                }else{    
-                    window.location.href = "../connexion.html";
+                }else{                  //Si connexion OK
+                    window.location.href = "../connexion.html";         //Redirection sur la page de connexion
                 }
-                
             });
-            
-
-
-
         });
 });

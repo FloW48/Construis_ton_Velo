@@ -65,7 +65,8 @@ const registerUtilisateur = async (req, res, next) => {
         tel:-1,
         ville: "",
         codepostal: -1,
-        rue: ""
+        rue: "",
+        admin: false
     })
     
     try{
@@ -110,6 +111,11 @@ const loginUtilisateur = async (req, res, next) => {
             });
         };
 
+        let isAdmin=false
+        if(user.admin){
+            isAdmin=true
+        }
+
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch){
             return res.json({
@@ -133,7 +139,7 @@ const loginUtilisateur = async (req, res, next) => {
       }
 }
 
-
+//Suppression d'un utilisateur correspondant à un identifiant
 const deleteUtilisateur  = (req, res, next) => {
     let name = req.body.name
 
@@ -150,6 +156,7 @@ const deleteUtilisateur  = (req, res, next) => {
     })
 }
 
+//Mise à jour des informations d'un utilisateur correspondant à un identifiant
 const updateUtilisateur = async (req, res , next) => {
     let id=req.body.userID
 

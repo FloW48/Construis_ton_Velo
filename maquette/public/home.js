@@ -1,6 +1,11 @@
-var pieces_selectionnees=new Array(5)
-var prixTotal=0
+var pieces_selectionnees=new Array(5)   //Contient les informations des pièces actuellement sélectionnées par l'utilisateur
+var prixTotal=0                         //Prix total des pièces
 
+
+/**
+ * Met à jour l'affichage du prix total
+ * @return {double} prixTotal - Le prix total des pièces sélectionnées
+ */
 function updatePrice(){
     let total=0;
     pieces_selectionnees.forEach(function (element){
@@ -20,6 +25,10 @@ function updatePrice(){
     return prixTotal
 }
 
+/**
+ * Indique si toutes les différentes pièces sont sélectionnées
+ * @return {boolean} Vrai si toutes les différentes pièces sont sélectionnées, faux sinon
+ */
 function isVeloComplet(){    
     for(let i=0;i<pieces_selectionnees.length;i++){
         if(pieces_selectionnees[i]==null){
@@ -32,16 +41,19 @@ function isVeloComplet(){
 document.addEventListener("DOMContentLoaded", async function () {
     let socket = io.connect();
     
-    //Vérification connexion utilisateur
+    //Vérification connexion utilisateur, et cache les éléments qui ne sont pas utiles selon cette condition
     if (localStorage.getItem("isConnected") !== null) {
         document.getElementById("btnLogIn").remove()
         document.getElementById("btnRegister").remove()
-        //document.getElementById("nameUser").innerHTML= "Connecté en tant que " + localStorage.getItem("userNom").toUpperCase()
+        if(localStorage.getItem("isAdmin") === "false"){
+            document.getElementById("buttonScrapping").remove()
+        }
     }else{
         document.getElementById("btnLogOut").remove()
         document.getElementById("btnMesVelos").remove()
         document.getElementById("btnMonCompte").remove()
-        document.getElementsByClassName("bottom")[1].innerHTML="Veuillez vous <a href=\"./connexion.html\">connecter</a> ou <a href=\"./enregistrement.html\">créer un compte</a> pour pouvoir sauvegarder ce vélo"
+        document.getElementById("buttonScrapping").remove()
+        document.getElementsByClassName("bottom")[1].innerHTML="Veuillez vous <a href=\"./connexion.html\">connecter</a> ou <a href=\"./enregistrement.html\">créer un compte</a> pour pouvoir sauvegarder ce vélo" //Message en bas du cadre du vélo affiché
     }
 
     //Cache le bouton 'Site source' en cas d'un clique autre part sur la page
@@ -52,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     })
 
-    //Charge les données du Local storage
+    //Charge les données du local storage
     function load(){
         if(JSON.parse(localStorage.getItem("savePieces"))!=null){
             pieces_selectionnees=JSON.parse(localStorage.getItem("savePieces"));
@@ -65,18 +77,25 @@ document.addEventListener("DOMContentLoaded", async function () {
             displayImages()
         }
     }
+
     load()
+    updatePrice()
 
     var popupPiece = document.getElementById("popupPiece");
     var closePopup = document.getElementById("closePopup");
     var elements_showPieces = document.getElementsByClassName("showPiece");
 
-    updatePrice()
 
-    //Affiche le vélo en bas de page
+    /**
+     * Affiche le vélo en bas de la page en affichant les images de chaque parties du vélo
+    */
     async function displayImages(){
-        let emptyPNGbase64="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg=="
+        let emptyPNGbase64="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg==" //Image vide pour représenter les pièces non selectionnées
 
+        /*Pour chaque pièces, vérification si elle est sélectionnée.
+            Si oui: demande au serveur la valeur en base 64 de l'image, puis affichage de cette image
+            Si non: Utilisation de l'image vide
+        */
         if(pieces_selectionnees[0]!=undefined){
             socket.emit("askImgBase64",pieces_selectionnees[0].image,function(imageBase64){                
                 displayImageContouring("cadre",imageBase64)
@@ -122,6 +141,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     }
 
+    /**
+     * Affichage d'une pièce dans le cadre de l'affichage du vélo, en faisant un traitement pour retirer son fond blanc
+     * @param {string} nom_piece - Nom de la partie représentée (ex: "cadre", "guidon" etc..)
+     * @param {string} base64 - Valeur base64 de l'image à afficher
+    */
     function displayImageContouring(nom_piece,base64){
         var canvas = document.getElementById(nom_piece);
         canvas.height=200;
@@ -129,22 +153,22 @@ document.addEventListener("DOMContentLoaded", async function () {
         var ctx = canvas.getContext("2d");
         ctx.fillStyle = "red";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        var img = new Image();   // Create new img element
+        var img = new Image();   
         img.src = base64
         img.onload = function(){
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
             var imgd = ctx.getImageData(0, 0, canvas.width, canvas.height),
             pix = imgd.data,
-            newColor = {r:150,g:150,b:120, a:0};
+            newColor = {r:150,g:150,b:120, a:0}; //Nouvelle valeur des pixels
             for (var i = 0, n = pix.length; i <n; i += 4) {
                 var r = pix[i],
                         g = pix[i+1],
                         b = pix[i+2];
             
-                    if( (r <= 255 && r > 200) 
+                    if( (r <= 255 && r > 200)           //Vérifie si le pixel actuel est dans les tons blancs
                         && (g <= 255 && g > 200)
                         && (b <= 255 && b > 200)){ 
-                        // Change the white to the new color.
+                        // Modification du pixel en utilisant les nouvelles valeurs
                         pix[i] = newColor.r;
                         pix[i+1] = newColor.g;
                         pix[i+2] = newColor.b;
@@ -155,11 +179,13 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
     
-    //Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML)
-    var function_showPieces = async function() {
+    /**
+     * Affiche toutes les pièces correspondantes à un id (id défini dans un attribut data-idpiece lors du clique sur l'élément dans la page HTML) dans une fenêtre 'popup'
+    */
+    async function function_showPieces () {
         var idpiece = this.getAttribute("data-idpiece");
         var popupcontent=document.getElementsByClassName("popup-content")[0];
-        popupcontent.innerHTML=""
+        popupcontent.innerHTML=""   //Réinitialise le contenu du popup
         
         var nom_piece="";
         
@@ -167,6 +193,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         var fetch_url="/api/equipement/showPieces?pieceID="+idpiece
 
+        //Récupération du nom de la partie du vélo selon son id
         switch(idpiece){
             case "1":
                 nom_piece="cadres"
@@ -184,15 +211,15 @@ document.addEventListener("DOMContentLoaded", async function () {
                 nom_piece="selles"
                 break
             default:
-                nom_piece="{inconnu}"
+                nom_piece="{pièce_inconnue}"
         }
 
         let titrePopup=document.createElement("h2");
         titrePopup.textContent="Liste des " + nom_piece + " disponibles :"
         popupcontent.appendChild(titrePopup)
 
-        var piecesCadres= await fetch(fetch_url);
-        var data = await piecesCadres.json();
+        var pieces= await fetch(fetch_url);
+        var data = await pieces.json();
 
         console.log(data)
 
@@ -215,34 +242,14 @@ document.addEventListener("DOMContentLoaded", async function () {
                     carbone: element.carbone,
                 };
 
-                /*
-                
-                //Enlever le style 'selected' à l'article précedemment choisi si il existe
-                if(pieces_selectionnees[idpiece-1] != undefined){
-                    let idarticle_curr=pieces_selectionnees[idpiece-1]._id;
-                    console.log(idarticle_curr)
-                    let article_curr = document.querySelector("[data-idarticle='"+idarticle_curr+"']")
-                    article_curr.classList.remove("selected")
-                    updatePrice();
-                }
-
-                piecePopup.classList.add("selected");       //Ajout du style 'selected' à l'article choisi
-
-                */
-
                 pieces_selectionnees[idpiece-1]=piece; //Sauvegarde l'article en tant que l'article choisi
 
                 showCurrentPiece(idpiece);
 
-                displayImages()
+                displayImages() //Met à jour le vélo affiché
                 updatePrice()
                 localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
             });
-            
-            /*
-            if( pieces_selectionnees[idpiece-1]!=undefined && pieces_selectionnees[idpiece-1]._id == element._id){
-                piecePopup.classList.add("selected");
-            }*/
 
             showInfosPiece(piecePopup,element)
 
@@ -254,11 +261,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         elements_showPieces[i].addEventListener('click', function_showPieces, false);
     }
     
+    //Gère la fermeture de la fenêtre popup
     closePopup.onclick = function() {
         document.getElementsByClassName("popup-content")[0].innerHTML="";
         popupPiece.style.display = "none";
     }
 
+    /**
+     * Créé un élément qui présente les informations d'une pièce: son nom, son prix, son image et son lien source
+     * @param {string} parentElement - Élément HTML étant le conteneur de l'élément crée
+     * @param {array} infosPiece - Tableau contenant les diverses information de la pièce
+    */
     function showInfosPiece(parentElement,infosPiece){
         //NOM PIECE
         let nom_article=document.createElement("h1");
@@ -267,12 +280,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         
         //IMAGE
         let img=document.createElement("img")
-        img.src=infosPiece.image                                //LIEN DE L'IMAGE
+        img.src=infosPiece.image             //Lien de l'image
         parentElement.appendChild(img)
 
         let table=document.createElement("table");
         
-        //LIGNE PRIX
+        //PRIX
         let trPrice=document.createElement('tr');
 
         let priceValue=document.createElement('td');
@@ -281,7 +294,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         table.appendChild(trPrice);
 
-        //LIGNE SITE SOURCE
+        //SITE SOURCE
         let trSite=document.createElement('tr');
 
         let siteValue=document.createElement('td');
@@ -315,13 +328,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         parentElement.appendChild(table)
     }
 
+
+    /**
+     * Affichage de la pièce actuellement sélectionnée, sur la page d'accueil, selon son identifiant de partie
+     * @param {string} idpiece - Identifiant de la partie du vélo
+    */
     function showCurrentPiece(idpiece){
         let pieceSelected = document.getElementsByClassName("showPiece")[idpiece-1].firstElementChild;
         pieceSelected.textContent="";
         showInfosPiece(pieceSelected,pieces_selectionnees[idpiece-1])
     }
 
-
+    //Boutons pour supprimer une pièce sélectionnée
     let delPieces=document.getElementsByClassName("delPiece")
     for (var i = 0; i < 5; i++) {
         delPieces[i].addEventListener('click', function(){
@@ -330,15 +348,16 @@ document.addEventListener("DOMContentLoaded", async function () {
             showPiece.innerHTML="<div class=\"pieceSelected\"><h1>Sélectionner une pièce</h1></div>"
 
             pieces_selectionnees[idpiece-1]=undefined;
-            displayImages()
+
+            displayImages() //Met à jour l'affichage du vélo
             updatePrice()
+
             localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
-            socket.emit("changePiece",()=>{
-                console.log("Update émis");
-            });
+
         });
     }
 
+    //Bouton pour choisir automatiquement les pièces les moins chères possibles
     let optPrix = document.getElementById("optPrix");
     optPrix.onclick = async function(){
         var fetch_url;
@@ -369,33 +388,31 @@ document.addEventListener("DOMContentLoaded", async function () {
         localStorage.setItem("savePieces", JSON.stringify(pieces_selectionnees));
     }
 
-    //Import de données préfaites
-    /*importDataPreset.onclick=async function(){
-        fetch('http://localhost:8080/importDataPreset')
-    }*/
-
+    //Bouton permettant de demander au serveur le lancement du scrapping
     let buttonScrapping=document.getElementById("buttonScrapping")
-    buttonScrapping.onclick=function(){
-        socket.emit("lancerScrapping")
+    if(buttonScrapping!=null){
+        buttonScrapping.onclick=function(){
+            socket.emit("lancerScrapping")
+        }
     }
 
     socket.on("scrappingOK",()=>{
         console.log("scrapping terminé")
     })
-    
-    load()
-
    
-    //Gestion des boutons visibles seulement si l'utilisateur est connecté
+    //Gestion des boutons et fonctionnalités visibles seulement si l'utilisateur est connecté
     if (localStorage.getItem("isConnected") !== null) {
         //Bouton déconnexion
         document.getElementById("btnLogOut").addEventListener("click", function(){
             localStorage.removeItem("isConnected")
+            localStorage.removeItem("userID")
+            localStorage.removeItem("isAdmin")
             window.location.reload()
         })
 
-        //Bouton 'Sauvegarder'
+        //Bouton de sauvegarde du vélo
         document.getElementById("saveVelo").addEventListener("click", async function(){
+            console.log(pieces_selectionnees)
             let nomVelo=document.getElementById("nomVelo").value
 
             let msgErreur=document.getElementsByClassName("errMsg")[0]
@@ -430,6 +447,8 @@ document.addEventListener("DOMContentLoaded", async function () {
                 nom: nomVelo,
                 prix: updatePrice()
             };
+            console.log(params)
+
             const options = {
                 method: 'POST',
                 headers: {
@@ -445,8 +464,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 } );
             
-                console.log(params)
 
+            document.getElementById("nomVelo").value=""
+            
             //Message de confirmation de la sauvegarde du vélo
             msgErreur.style.color = 'green';
             msgErreur.innerHTML="Vélo sauvegardé!"

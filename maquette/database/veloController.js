@@ -1,6 +1,6 @@
 const Velo = require('./veloSchema');
 
-
+//Renvoi tous les vélos de la BD
 const showAll = (req, res, next) => {
     Velo.find()
     .then(response => {
@@ -15,6 +15,7 @@ const showAll = (req, res, next) => {
     })
 }
 
+//Renvoi un vélo selon son identifiant
 const showVelo = (req, res, next) => {
     var veloID = req.query.veloID;
 
@@ -31,6 +32,7 @@ const showVelo = (req, res, next) => {
     })
 }
 
+//Renvoi tous les vélos liés à un utilisateur
 const showVelosOfUser = (req, res, next) => {
     var userID = req.query.userID;
 
@@ -47,6 +49,7 @@ const showVelosOfUser = (req, res, next) => {
     })
 }
 
+//Ajoute un nouveau vélo dans la BD grâce aux informations transmises
 const newVelo = (req, res, next) => {
     let velo = new Velo({
         id_owner: req.body.id_owner,
@@ -59,7 +62,7 @@ const newVelo = (req, res, next) => {
         prix: req.body.prix,
         isBought: false
     })
-
+console.log(velo)
     velo.save()
     .then(response => {
         res.json({
@@ -73,6 +76,7 @@ const newVelo = (req, res, next) => {
     })
 }
 
+//Supprime tous les vélos de la BD
 const deleteAll  = (req, res, next) => {
     Velo.deleteMany({})
     .then(response => {
@@ -87,6 +91,7 @@ const deleteAll  = (req, res, next) => {
     })
 }
 
+//Supprime un vélo selon son identifiant
 const deleteOne  = (req, res, next) => {
     let id = req.query.veloID
 

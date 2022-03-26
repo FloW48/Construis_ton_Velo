@@ -17,13 +17,14 @@ document.addEventListener("DOMContentLoaded", async function () {
         popupPiece.style.display = "none";
     }
 
+    //Vérifie si l'utilisateur est connecté ou non
     if (localStorage.getItem("isConnected") === null) {
         let errMsg=document.createElement("div")
         errMsg.classList.add("errMsg")
         errMsg.innerHTML="Vous n'êtes pas connecté! <h1>Cliquez <a href=\"connexion.html\">ici</a> pour vous connecter</h1>"
         document.body.appendChild(errMsg)
-        
     }else{
+
         let vosVelos=document.createElement("h2")
         vosVelos.innerHTML="Vos vélos :"
         document.body.appendChild(vosVelos)
@@ -32,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         bikeList.setAttribute("id","bikeList")
         document.body.appendChild(bikeList)
 
-        var fetch_url="/api/velo/showVelosOfUser?userID="+localStorage.getItem("userID")
+        var fetch_url="/api/velo/showVelosOfUser?userID="+localStorage.getItem("userID")    //Récupère les vélos de l'utilisateur connecté
 
         var velosUser= await fetch(fetch_url);
         var data = await velosUser.json();
@@ -42,170 +43,176 @@ document.addEventListener("DOMContentLoaded", async function () {
             msgAucunVelo.classList.add("errMsg")
             msgAucunVelo.innerHTML="Vous n'avez pas encore sauvegardé de vélo!"
             document.body.appendChild(msgAucunVelo)
-        }
+        }else{          //Crée l'affichage résumant les pièces de chaque vélos
+            let num_velo=0
+            data['response'].forEach(async function(velo){
+                let mainPanel=document.createElement("div")
+                mainPanel.classList.add("monVeloInfos")
+                
+                let titre=document.createElement("div")
+                titre.classList.add("titreSection")
+                titre.innerHTML=velo.nom
 
-        let num_velo=0
-        data['response'].forEach(async function(velo){
-            let mainPanel=document.createElement("div")
-            mainPanel.classList.add("monVeloInfos")
-            
-            let titre=document.createElement("div")
-            titre.classList.add("titreSection")
-            titre.innerHTML=velo.nom
+                mainPanel.appendChild(titre)
 
-            mainPanel.appendChild(titre)
+                let table=document.createElement("table")
+                let tbody=document.createElement("tbody")
+                let tr1=document.createElement("tr")
+                
 
-            let table=document.createElement("table")
-            let tbody=document.createElement("tbody")
-            let tr1=document.createElement("tr")
-            
+                let cadre=document.createElement("td")
+                cadre.innerHTML="CADRE"
+                tr1.appendChild(cadre)
 
-            let cadre=document.createElement("td")
-            cadre.innerHTML="CADRE"
-            tr1.appendChild(cadre)
+                let pneus=document.createElement("td")
+                pneus.innerHTML="PNEU (x2)"
+                tr1.appendChild(pneus)
 
-            let pneus=document.createElement("td")
-            pneus.innerHTML="PNEU (x2)"
-            tr1.appendChild(pneus)
+                let guidon=document.createElement("td")
+                guidon.innerHTML="GUIDON"
+                tr1.appendChild(guidon)
 
-            let guidon=document.createElement("td")
-            guidon.innerHTML="GUIDON"
-            tr1.appendChild(guidon)
+                let plateau=document.createElement("td")
+                plateau.innerHTML="PLATEAU"
+                tr1.appendChild(plateau)
 
-            let plateau=document.createElement("td")
-            plateau.innerHTML="PLATEAU"
-            tr1.appendChild(plateau)
+                let selle=document.createElement("td")
+                selle.innerHTML="SELLE"
+                tr1.appendChild(selle)
 
-            let selle=document.createElement("td")
-            selle.innerHTML="SELLE"
-            tr1.appendChild(selle)
+                tbody.appendChild(tr1)
 
-            tbody.appendChild(tr1)
-
-            let tr2=document.createElement("tr")
-            let td=document.createElement("td")
-            for(let i=0;i<5;i++){
-                tr2.appendChild(td.cloneNode(true))
-            }
-
-            tbody.appendChild(tr2)
-
-            table.appendChild(tbody)
-            mainPanel.appendChild(table)
-            
-            let bottom=document.createElement("div")
-            bottom.classList.add("bottom")
-
-            let btnFacture=document.createElement("button")
-            btnFacture.innerHTML="Facture"
-            btnFacture.classList.add("saveButton")
-
-            let idpieces_velo=[]
-            idpieces_velo.push(velo.id_cadre)
-            idpieces_velo.push(velo.id_pneus)
-            idpieces_velo.push(velo.id_guidon)
-            idpieces_velo.push(velo.id_plateau)
-            idpieces_velo.push(velo.id_selle)
-
-            let veloPieces=[]
-            
-            let autresInfos={
-                nomClient:localStorage.getItem("userNom"),
-                nomVelo:velo.nom,
-            }
-            
-
-            for(let i=0;i<5;i++){
-                var fetch_url="/api/equipement/showPiece?pieceID="+idpieces_velo[i]
-
-                var piece= await fetch(fetch_url);
-                var data = await piece.json();
-
-                let infos_piece=data['response'][0]
-                delete infos_piece['_id'];
-                delete infos_piece['id_partie'];
-                delete infos_piece['carbone'];
-                veloPieces.push(infos_piece)
-            }
-            
-            btnFacture.addEventListener("click", async ()=>{
-                console.log(event.target.getAttribute("data-idVelo"))
-                let infosFacture={
-                    veloPieces,
-                    autresInfos
-                }              
-                socket.emit("sauvegarder", infosFacture);
-            })
-
-            bottom.appendChild(btnFacture)
-
-            let btnAfficherVelo=document.createElement("button")
-            btnAfficherVelo.innerHTML="Afficher vélo"
-            btnAfficherVelo.classList.add("afficherVelo")
-            btnAfficherVelo.addEventListener("click",async()=>{
-                popupPiece.style.display = "block";
-                displayImages(veloPieces)
-            })
-
-            bottom.appendChild(btnAfficherVelo)
-
-            let btnSupprimerVelo=document.createElement("button")
-            btnSupprimerVelo.innerHTML="Supprimer vélo"
-            btnSupprimerVelo.classList.add("supprimerVelo")
-            btnSupprimerVelo.addEventListener("click",async(event)=>{
-                console.log("supprimer velo", velo._id)
-                var fetch_url="/api/velo/deleteOne?veloID="+velo._id
-                var res= await fetch(fetch_url);
-                var data = await res.json();
-
-                if(data['err']===0){
-                    event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode);  //Supprime le vélo côté client
+                let tr2=document.createElement("tr")
+                let td=document.createElement("td")
+                for(let i=0;i<5;i++){
+                    tr2.appendChild(td.cloneNode(true))
                 }
-            })
 
-            bottom.appendChild(btnSupprimerVelo)
+                tbody.appendChild(tr2)
 
-            let infoAchat=document.createElement("div")
-            infoAchat.classList.add("infoAchat")
-            bottom.appendChild(infoAchat)
+                table.appendChild(tbody)
+                mainPanel.appendChild(table)
+                
+                let bottom=document.createElement("div")
+                bottom.classList.add("bottom")
 
-            let isBought=velo.isBought
-            if(!isBought){
-                infoAchat.innerHTML="Ce vélo n'a pas été acheté"
+                let btnFacture=document.createElement("button")
+                btnFacture.innerHTML="Facture"
+                btnFacture.classList.add("saveButton")
 
-                let btnAcheterVelo=document.createElement("button")
-                btnAcheterVelo.innerHTML="Acheter vélo"
-                btnAcheterVelo.classList.add("acheterVelo")
-                btnAcheterVelo.addEventListener("click",async(event)=>{
-                    console.log("acheter velo", velo._id)
-                    var fetch_url="/api/velo/acheterVelo?veloID="+velo._id
+                //Sauvegarde des identifiants de toutes les pièces du vélo dans un tableau à part
+                let idpieces_velo=[]
+                idpieces_velo.push(velo.id_cadre)
+                idpieces_velo.push(velo.id_pneus)
+                idpieces_velo.push(velo.id_guidon)
+                idpieces_velo.push(velo.id_plateau)
+                idpieces_velo.push(velo.id_selle)
+
+                let veloPieces=[]
+                
+                let autresInfos={
+                    nomClient:localStorage.getItem("userNom"),
+                    nomVelo:velo.nom
+                }
+                
+
+                for(let i=0;i<5;i++){
+                    var fetch_url="/api/equipement/showPiece?pieceID="+idpieces_velo[i]
+                    var piece= await fetch(fetch_url);
+                    var dataPiece = await piece.json();
+
+                    console.log(dataPiece['response'])
+                    let infos_piece=dataPiece['response']
+                    
+                    delete infos_piece['_id'];
+                    delete infos_piece['id_partie'];
+                    delete infos_piece['carbone'];
+                    veloPieces.push(infos_piece)
+                }
+                
+                btnFacture.addEventListener("click", async ()=>{
+                    console.log(event.target.getAttribute("data-idVelo"))
+                    let infosFacture={
+                        veloPieces,
+                        autresInfos
+                    }              
+                    socket.emit("sauvegarder", infosFacture);
+                })
+
+                bottom.appendChild(btnFacture)
+
+                let btnAfficherVelo=document.createElement("button")
+                btnAfficherVelo.innerHTML="Afficher vélo"
+                btnAfficherVelo.classList.add("afficherVelo")
+                btnAfficherVelo.addEventListener("click",async()=>{
+                    popupPiece.style.display = "block";
+                    displayImages(veloPieces)
+                })
+
+                bottom.appendChild(btnAfficherVelo)
+
+                //Bouton permettant de supprimer le vélo actuel
+                let btnSupprimerVelo=document.createElement("button")
+                btnSupprimerVelo.innerHTML="Supprimer vélo"
+                btnSupprimerVelo.classList.add("supprimerVelo")
+                btnSupprimerVelo.addEventListener("click",async(event)=>{
+                    console.log("supprimer velo", velo._id)
+                    var fetch_url="/api/velo/deleteOne?veloID="+velo._id
                     var res= await fetch(fetch_url);
                     var data = await res.json();
 
                     if(data['err']===0){
-                        infoAchat.innerHTML="Ce vélo a été acheté"
+                        event.target.parentNode.parentNode.parentNode.removeChild(event.target.parentNode.parentNode);  //Supprime le vélo côté client
                     }
                 })
-                infoAchat.appendChild(btnAcheterVelo)
-            }else{
-                infoAchat.innerHTML="Ce vélo a été acheté"
-            }
+
+                bottom.appendChild(btnSupprimerVelo)
+
+                let infoAchat=document.createElement("div")
+                infoAchat.classList.add("infoAchat")
+                bottom.appendChild(infoAchat)
+
+                //Gère l'affichage dépendant de si le vélo a été acheté ou non
+                let isBought=velo.isBought
+                if(!isBought){
+                    infoAchat.innerHTML="Ce vélo n'a pas été acheté"
+
+                    let btnAcheterVelo=document.createElement("button")
+                    btnAcheterVelo.innerHTML="Acheter vélo"
+                    btnAcheterVelo.classList.add("acheterVelo")
+                    btnAcheterVelo.addEventListener("click",async(event)=>{
+                        console.log("acheter velo", velo._id)
+                        var fetch_url="/api/velo/acheterVelo?veloID="+velo._id
+                        var res= await fetch(fetch_url);
+                        var data = await res.json();
+
+                        if(data['err']===0){
+                            infoAchat.innerHTML="Ce vélo a été acheté"
+                        }
+                    })
+                    infoAchat.appendChild(btnAcheterVelo)
+                }else{
+                    infoAchat.innerHTML="Ce vélo a été acheté"
+                }
 
 
-            mainPanel.appendChild(bottom)
+                mainPanel.appendChild(bottom)
 
-            bikeList.appendChild(mainPanel)
+                bikeList.appendChild(mainPanel)
 
-            for(let i=0;i<5;i++){
-                displayPiece(idpieces_velo[i],num_velo,i)
-            }
-        
-            num_velo++
+                for(let i=0;i<5;i++){
+                    displayPiece(idpieces_velo[i],num_velo,i)
+                }
             
-        })
+                num_velo++
+            })
+        }        
     }
 
-    //Affiche le vélo complet
+    /**
+     * Affiche le vélo en bas de la page en affichant les images de chaque parties du vélo
+     * @param {array} infos_velo  Tableau contenant les informations du vélo à afficher
+    */
     async function displayImages(infos_velo){
         console.log("infos velo", infos_velo)
         let cadre=document.getElementById("cadre")
@@ -269,6 +276,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         
     }
 
+    /**
+     * Affichage d'une pièce dans le cadre de l'affichage du vélo, en faisant un traitement pour retirer son fond blanc
+     * @param {string} nom_piece - Nom de la partie représentée (ex: "cadre", "guidon" etc..)
+     * @param {string} base64 - Valeur base64 de l'image à afficher
+    */
     async function displayImageContouring(nom_piece,base64){
         var canvas = document.getElementById(nom_piece);
         canvas.height=200;
@@ -276,7 +288,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         var ctx = canvas.getContext("2d");
         ctx.fillStyle = "red";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        var img = new Image();   // Create new img element
+        var img = new Image();  
         img.src = base64
         img.onload = function(){
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -288,10 +300,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                         g = pix[i+1],
                         b = pix[i+2];
             
-                    if( (r <= 255 && r > 200) 
+                    if( (r <= 255 && r > 200)       //Vérifie si le pixel actuel est dans les tons blancs
                         && (g <= 255 && g > 200)
                         && (b <= 255 && b > 200)){ 
-                        // Change the white to the new color.
+                        // Modification du pixel en utilisant les nouvelles valeurs
                         pix[i] = newColor.r;
                         pix[i+1] = newColor.g;
                         pix[i+2] = newColor.b;
@@ -302,6 +314,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
+    //Ouvre le PDF généré dans une nouvelle fenêtre, après sa création par le serveur
     socket.on("pdfPath",(nom_pdf)=>{
         console.log("Génération de la facture sous format PDF: OK")
         let path="../"+nom_pdf+".pdf"
@@ -310,10 +323,12 @@ document.addEventListener("DOMContentLoaded", async function () {
     
 });
 
-/*
-* id_piece: Identifiant unique de la piece
-* num_velo: Numero du velo dans la liste
-* num_piece: Type de piece (0: Cadre, 1: Pneu, 2: Guidon, 3: Plateau, 4: Selle)
+
+/**
+ * Créé un élément qui présente les informations d'une pièce: son nom, son prix, son image et son lien source
+ * @param {integer} id_piece Identifiant unique de la piece
+ * @param {integer} num_velo Numéro du velo dans la liste
+ * @param {integer} num_piece Type de piece (0: Cadre, 1: Pneu, 2: Guidon, 3: Plateau, 4: Selle)
 */
 async function displayPiece(id_piece, num_velo, num_piece){
     var fetch_url="/api/equipement/showPiece?pieceID="+id_piece
@@ -321,7 +336,7 @@ async function displayPiece(id_piece, num_velo, num_piece){
     var piece= await fetch(fetch_url);
     var data = await piece.json();
 
-    let infos_piece=data['response'][0]
+    let infos_piece=data['response']
     
     let pieceSelected = document.createElement("div");
     pieceSelected.classList.add("pieceSelected");

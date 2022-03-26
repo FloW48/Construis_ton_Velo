@@ -1,6 +1,6 @@
 const Equipement = require('./equipementSchema')
 
-
+//Renvoi les informations de tous les équipements de la BD
 const showAll = (req, res, next) => {
     Equipement.find()
     .then(response => {
@@ -32,11 +32,11 @@ const showPieces = (req, res, next) => {
     })
 }
 
-//Retourne une pièce correspondant à un ID
+//Retourne une pièce correspondant à un ID spécifique
 const showPiece = (req, res, next) => {
     var pieceID = req.query.pieceID;
-
-    Equipement.find({"_id": pieceID})
+    
+    Equipement.findById(pieceID)
     .then(response => {
         res.json({
             response
@@ -49,15 +49,23 @@ const showPiece = (req, res, next) => {
     })
 }
 
-const newEquipement = (req, res, next) => {
+//Ajoute un nouvel équipement dans la BD
+const newEquipement = async (req, res, next) => {
+    //Vérifie si la pièce existe déjà dans la BD selon son nom
+    let equipementExistant= await Equipement.findOne({nom:req.body.nom})
+    if(equipementExistant){
+        return res.json({
+            err:1,
+            message: "Cette pièce est déjà présente."
+        })
+    }
+
     let equipement = new Equipement({
-        _id: req.body._id, 
         id_partie: req.body.id_partie,
         nom: req.body.nom,
         prix: req.body.prix,
         lien: req.body.lien,
-        image: req.body.image,
-        carbone: req.body.carbone
+        image: req.body.image
     })
     equipement.save()
     .then(response => {
@@ -72,6 +80,7 @@ const newEquipement = (req, res, next) => {
     })
 }
 
+//Supprime tous les équipements présents dans la BD
 const deleteAll  = (req, res, next) => {
     Equipement.deleteMany({})
     .then(response => {
@@ -86,6 +95,7 @@ const deleteAll  = (req, res, next) => {
     })
 }
 
+//Renvoi les informations de la pièce la moins chère correspondante à un certain type de pièce (pieceID)
 const findMinPrice = (req, res, next) => {
     var pieceID = req.query.pieceID;
 

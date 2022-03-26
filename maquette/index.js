@@ -81,6 +81,7 @@ app.use('/api/velo',VeloRoute);
 var mongoose = require('mongoose');
 const { setgroups } = require('process');
 const { isDeepStrictEqual } = require('util');
+const { format } = require('path/posix');
 
 //mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 mongoose.connect('mongodb+srv://projetl3velo:VxWuKP9w5MFT7U%40@cluster0.t5na3.mongodb.net/creerTonVelo?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
@@ -106,7 +107,6 @@ async function scrapeElements2(url,id_partie){
     prixTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".prod__price__cur")).map(x => x.firstElementChild.textContent.slice(0, -1).replace(/,/g, "."));
     });
-    //console.log(prixTable);
 
 
     //Scrapping des noms
@@ -114,21 +114,18 @@ async function scrapeElements2(url,id_partie){
     nomsTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".prod__name__title")).map(x => x.innerHTML);
     });
-    //console.log(nomsTable);
 
     //Scrapping des images
     let imagesTable = [];
     imagesTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".prod__picture")).map(x => x.lastElementChild.getAttribute("data-src"));
     });
-    //console.log(imagesTable);
 
     //Scrapping des liens
     let liensTable = [];
     liensTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".prod__relative")).map(x => "https://www.bmxavenue.com" + x.firstElementChild.children[4].getAttribute("href"));
     });
-    //console.log(liensTable);
 
 
     await browser.close()
@@ -185,28 +182,23 @@ async function scrapeElements(url, id_partie){
         prixTable[i] = parseFloat(prixTable[i]);
     }
 
-    console.log(prixTable)
-
     //Scrapping des images
     let imagesTable = [];
     imagesTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".productBloc_img")).map(x => x.firstElementChild.getAttribute("data-src"));
     });
-    console.log(imagesTable);
 
     //Scrapping des noms
     let nomsTable = [];
     nomsTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".product_title")).map(x => x.textContent);
     });
-    console.log(nomsTable);
     
     //Scrapping des liens
     let liensTable = [];
     liensTable = await page.evaluate(() => {
         return Array.from(document.querySelectorAll(".product_link")).map(x => "https://www.probikeshop.fr" + x.getAttribute("href"));
     });
-    console.log(liensTable);
 
     await browser.close();
 
@@ -237,9 +229,6 @@ async function scrapeElements(url, id_partie){
 }
 
 async function scrapAll(){
-    let fetch_url=domain+'/api/equipement/deleteAll'
-
-    await fetch(fetch_url);  //Supprime tous les éléments présents dans la collection 'Equipement'
     await scrapeElements(URLCadres,1);
     await scrapeElements(URLPneus,2);
     await scrapeElements(URLGuidons,3);
@@ -257,11 +246,6 @@ async function scrapAll(){
 io.on('connection', function (socket) {
     console.log("Un client s'est connecté");
 
-
-    socket.on("changePiece",()=>{
-        console.log("update reçu");
-    });
-
     socket.on("sauvegarder", async (infosFacture)=> {
         console.log(infosFacture)
 
@@ -269,12 +253,21 @@ io.on('connection', function (socket) {
         let velo=infosFacture.veloPieces
         let total = 0;
         for(let i = 0;i<5;i++){
+            
             let nom = velo[i].nom;
             let prix = Math.round(velo[i].prix * 100) / 100;
             if(i == 1) prix*=2;
             total += prix;
             let lien = velo[i].lien;
-            let imageBase64=await base64Image(velo[i].image)
+
+            let imageBase64
+            var formatImage = velo[i].image.split('.').pop();   //Récupère le format de l'image en séparant l'URL en utilisant le "." comme séparateur et récupére la dernière valeur
+            if(formatImage=="gif"){ //Le format gif n'est pas accepté par pdfmake pour l'insertion d'image, donc on remplace l'image de la pièce par une image d'erreur 
+                imageBase64 ="./images/erreurImage.jpg"
+            }else{
+                imageBase64=await base64Image(velo[i].image)
+            }
+        
             info.push({'nom':nom,'prix':prix,'lien':lien,'imageBase64':imageBase64});
         }
         info.push(total);   //Index 5: Prix total
@@ -300,6 +293,7 @@ io.on('connection', function (socket) {
 
     async function base64Image(image){
         let base64=await fetch(image).then(r => r.buffer()).then(buf => `data:image/${"jpg"};base64,`+buf.toString('base64'));
+
         return base64
     }
 

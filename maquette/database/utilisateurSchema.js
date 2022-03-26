@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+//Attributs de la collection 'Utilisateur'
 const utilisateurSchema = new Schema({
     nom: String,
     firstname: String,
@@ -10,7 +11,8 @@ const utilisateurSchema = new Schema({
     tel: Number,
     ville: String,
     codepostal: Number,
-    rue: String
+    rue: String,
+    admin: Boolean
 });
 
 const Utilisateur = mongoose.model('Utilisateur', utilisateurSchema);
