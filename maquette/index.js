@@ -83,9 +83,6 @@ app.use('/api/velo',VeloRoute);
 
 //Import the mongoose module
 var mongoose = require('mongoose');
-const { setgroups } = require('process');
-const { isDeepStrictEqual } = require('util');
-const { format } = require('path/posix');
 
 //Connexion à la BD
 mongoose.connect('mongodb+srv://projetl3velo:VxWuKP9w5MFT7U%40@cluster0.t5na3.mongodb.net/creerTonVelo?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
