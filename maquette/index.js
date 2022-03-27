@@ -25,6 +25,7 @@ var pdfmake = new Pdfmake(fonts);
 
 var app = express();
 
+//Liens utilisés pour le scrapping
 const URLCadres = "https://www.probikeshop.fr/bmx/bmx-street-dirt-cadres-c3258.html";
 const URLPneus = "https://www.probikeshop.fr/bmx/bmx-street-dirt-roues-et-pneus-pneus-c3285.html";
 const URLGuidons = "https://www.probikeshop.fr/bmx/bmx-street-dirt-peripheriques-guidons-c3268.html";
@@ -38,15 +39,17 @@ const URLPlateaux2 = "https://www.bmxavenue.com/transmissions-freestyle/couronne
 const URLSelles2 = "https://www.bmxavenue.com/selles-tiges-freestyle/selles-pivotal/";
 
 
-
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 
+//Récupère les routes des différentes collections de la BD, afin de pouvoir manipuler les données
 const EquipementRoute = require('./database/equipementRoute')
 const VeloRoute = require('./database/veloRoute')
 const UtilisateurRoute = require('./database/utilisateurRoute')
 
-let domain="http://localhost:"
+let domain="http://localhost:"  //Début de la chaine qui sera utilisé pour les fonctions 'fetch'
+
+//Recherche du premier port disponible (par défaut entre 8000 et 65535 (documentation 'portfinder') )
 portfinder.getPort(function (err, port) {
     domain+=port
     server.listen(port, function() {
@@ -67,11 +70,12 @@ app.use(function(req, res, next) {
 
 // Configuration d'express pour utiliser le répertoire "public"
 app.use(express.static('public'));
-// set up to 
+
 app.get('/', function(req, res) {  
     res.sendFile(__dirname + '/public/home.html');
 });
 
+//Utilisation des routes pour la manipulation des données des différentes collection
 app.use('/api/equipement',EquipementRoute);
 app.use('/api/utilisateur',UtilisateurRoute);
 app.use('/api/velo',VeloRoute);
@@ -83,19 +87,22 @@ const { setgroups } = require('process');
 const { isDeepStrictEqual } = require('util');
 const { format } = require('path/posix');
 
-//mongoose.connect('mongodb://localhost:27017/creer_ton_velo', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
+//Connexion à la BD
 mongoose.connect('mongodb+srv://projetl3velo:VxWuKP9w5MFT7U%40@cluster0.t5na3.mongodb.net/creerTonVelo?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}).then(() => console.log('Connected to MongoDB...')).catch((err) => console.error("Coudn't connect MongoDB....", err));
 
 const { Schema } = mongoose;
-//Get the default connection
+//Récupère la connexion
 var db = mongoose.connection;
 
-//Bind connection to error event (to get notification of connection errors)
+//Récupère les informations en cas d'erreur de connexion
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 
-
-var index=0;    //ID pour les éléménts de la BD
+/**
+ * Fonction de scrapping permettant de récupérer les données du site bmxavenue.com
+ * @param {string} url - Lien complet de la page à 'scrapper'
+ * @param {string} id_partie - Identifiant de la partie du vélo correspondante (1: Cadre, 2: Pneus, 3: Guidon, 4: Selle, 5: Plateau)
+*/
 async function scrapeElements2(url,id_partie){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
@@ -130,12 +137,12 @@ async function scrapeElements2(url,id_partie){
 
     await browser.close()
     
-    let nb_elem=imagesTable.length;
+    let nb_elem=imagesTable.length;//Nombre d'éléments récupérés
     
 
+    //Pour chaque pièces, ajout dans la BD
     for(let i=0;i<nb_elem;i++){
         let piece = {
-            _id: index,
             id_partie: id_partie,
             nom: nomsTable[i],
             prix: prixTable[i],
@@ -151,10 +158,14 @@ async function scrapeElements2(url,id_partie){
             headers: { 'Content-Type': 'application/json' }
         }).then(res => res.json())
           .then(json => console.log(json));
-          index++;
     }
 }
 
+/**
+ * Fonction de scrapping permettant de récupérer les données du site probikeshop.fr
+ * @param {string} url - Lien complet de la page à 'scrapper'
+ * @param {string} id_partie - Identifiant de la partie du vélo correspondante (1: Cadre, 2: Pneus, 3: Guidon, 4: Selle, 5: Plateau)
+*/
 async function scrapeElements(url, id_partie){
     const browser = await puppeteer.launch();
     const page = await browser.newPage()
@@ -202,18 +213,17 @@ async function scrapeElements(url, id_partie){
 
     await browser.close();
 
-    let nb_elem=imagesTable.length;
+    let nb_elem=imagesTable.length; //Nombre d'éléments récupérés
     
 
+    //Pour chaque pièces, ajout dans la BD
     for(let i=0;i<nb_elem;i++){
         let piece = {
-            _id: index,
             id_partie: id_partie,
             nom: nomsTable[i],
             prix: prixTable[i],
             lien: liensTable[i],
             image: imagesTable[i],
-            carbone: 50
         };
         
         let fetch_url=domain+'/api/equipement/newEquipement'
@@ -224,10 +234,10 @@ async function scrapeElements(url, id_partie){
             headers: { 'Content-Type': 'application/json' }
         }).then(res => res.json())
           .then(json => console.log(json));
-          index++;
     }
 }
 
+//Fonction générale lançant tous les scrapping nécéssaires
 async function scrapAll(){
     await scrapeElements(URLCadres,1);
     await scrapeElements(URLPneus,2);
@@ -243,20 +253,20 @@ async function scrapAll(){
     console.log("Scrapping: OK")
 }
 
+//Lors de la connexion d'un utilisateur
 io.on('connection', function (socket) {
     console.log("Un client s'est connecté");
 
-    socket.on("sauvegarder", async (infosFacture)=> {
-        console.log(infosFacture)
-
-        let info = [];
-        let velo=infosFacture.veloPieces
-        let total = 0;
+    //Fonction de l'initialisation des données pour la facture au format PDF + appel de la fonction de création du PDF
+    socket.on("facturePDF", async (infosFacture)=> {
+        let info = [];  //Tableau comprenant les informations du vélo, le prix total et les informations de l'utilisateur
+        let velo=infosFacture.veloPieces    //Stockage des informations des pièces
+        let total = 0;  //Prix total du vélo
         for(let i = 0;i<5;i++){
             
             let nom = velo[i].nom;
             let prix = Math.round(velo[i].prix * 100) / 100;
-            if(i == 1) prix*=2;
+            if(i == 1) prix*=2; //Pour les pneux, prix multiplié par 2
             total += prix;
             let lien = velo[i].lien;
 
@@ -271,7 +281,7 @@ io.on('connection', function (socket) {
             info.push({'nom':nom,'prix':prix,'lien':lien,'imageBase64':imageBase64});
         }
         info.push(total);   //Index 5: Prix total
-        info.push(infosFacture.autresInfos) //Index 6: autres infos: nomVelo et nomClient
+        info.push(infosFacture.autresInfos) //Index 6: autres infos: nomVelo et informations du client (nom, adresse, telephone, mail..)
 
 
         makePDF({
@@ -280,16 +290,19 @@ io.on('connection', function (socket) {
             console.log(file);
         });
 
-        socket.emit("finPDF",(pdfDoc) =>{
-            console.log("PDF envoyé au client");
-        });
     });
 
+    //Lorsque l'utilisateur demande le lancement du scrapping via un clique sur le bouton associé (compte admin uniquement)
     socket.on("lancerScrapping", async ()=>{
         console.log("lancerScrapping recu")
         await scrapAll()
-        io.sockets.emit("scrappingOK")
+        io.sockets.emit("scrappingOK")  //Prévient le client lors de la fin du scrapping
     })
+
+    /**
+     * Conversion d'une image .jpg via son lien en une chaine de caractère en base64
+     * @param {string} image - URL de l'image
+     */
 
     async function base64Image(image){
         let base64=await fetch(image).then(r => r.buffer()).then(buf => `data:image/${"jpg"};base64,`+buf.toString('base64'));
@@ -303,30 +316,45 @@ io.on('connection', function (socket) {
         callback(base64)
     })
 
-    
+    /**
+     * Création du PDF de la facture
+     * @param {array} datas - Tableau comprenant les informations du vélo et de l'utilisateur
+     */
     const makePDF = (datas) => {
         let aPromise = new Promise((resolve, reject) => {
             console.time('creatingPDF')
             
+            //Récupère la date et l'heure exacte, pour le nom du fichier
             const d = new Date();
             let currDate=d.getDate() + "-" + d.getMonth() + "-" + d.getFullYear() + "-" + d.getHours() + "-" + d.getMinutes() + "-" + d.getSeconds()
             
+            //Génération du nom du PDF: date + heure + nom du vélo
             let nomPDF=currDate+"-"+datas.data[6].nomVelo;
+            
+            //Informations de l'utilisateur, affichée en haut à gauche du PDF
             let titreVelo="Votre vélo \""+datas.data[6].nomVelo+"\""
             let nomClient=datas.data[6].nomClient
+            let nomPrenomClient=datas.data[6].nomFamilleClient + " " + datas.data[6].prenomClient
+            let rue=datas.data[6].rueClient
+            let cpVille= datas.data[6].cpClient==-1 ? "" : datas.data[6].cpClient + " " + datas.data[6].villeClient
+            let tel= datas.data[6].telClient==-1 ? "" : "0"+datas.data[6].telClient
+            let email=datas.data[6].emailClient
 
             var doc = {
                 content: [
-                    { text : 'Nom du site',style: 'nosCoords'},
+                    { text : 'MakeYourBMX',style: 'nosCoords'},     //Coordonnées fictives du site (en haut à droite du PDF)
                     { text : '16 route de Gray', style : 'nosCoords' },
                     { text : '25000 Besançon', style : 'nosCoords'},
         
                     { text : titreVelo,style: 'utilCoords'},
                     { text : nomClient, style : 'utilCoords'},
-                    { text : '10 Grande Rue', style : 'utilCoords' },
-                    { text : '70100 Gray', style : 'utilCoords'},
+                    { text : nomPrenomClient, style : 'utilCoords'},
+                    { text : rue, style : 'utilCoords' },
+                    { text : cpVille, style : 'utilCoords'},
+                    { text : tel, style : 'utilCoords'},
+                    { text : email, style : 'utilCoords'},
                     { style: 'table',
-                        table: {
+                        table: {                                //Tableau récapitulatif des pièces du vélo
                             heights: [10, 30, 30,30,30,30,30],
                             widths: [200, 250, 50,50],
                             body: [
@@ -340,7 +368,7 @@ io.on('connection', function (socket) {
                             ],
                         },
                     },
-                    {
+                    {               //Affichage des images des pièces
                         columns: [
                           {
                             image: datas.data[0].imageBase64,
@@ -400,7 +428,7 @@ io.on('connection', function (socket) {
             pdfDoc.pipe(writeStream);
             pdfDoc.end();
 
-            writeStream.on('finish', function () {
+            writeStream.on('finish', function () {      //Création du fichier du PDF et écriture dans le stockage côté serveur
                 console.timeEnd('creatingPDF');
                 resolve(nomPDF+".pdf");
                 socket.emit("pdfPath",nomPDF)

@@ -227,10 +227,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             let piecePopup = document.createElement("div");
             piecePopup.className="piecePopup";
 
-            var data_idarticle = document.createAttribute("data-idarticle");
-            data_idarticle.value = element._id;
-            piecePopup.setAttributeNode(data_idarticle);
-
             piecePopup.addEventListener("click", async function () {
                 var piece = {
                     _id: element._id,

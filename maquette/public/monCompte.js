@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let infosUser=data['response']
 
     //Rempli les informations de l'utilisateur, sauf le mot de passe (si l'utilisateur ne veut pas modifier son mot de passe, alors il doit laisser le champ vide)
-    document.getElementById('nom').value=infosUser.nom
+    document.getElementById('nom').innerHTML=infosUser.nom
     document.getElementById('firstname').value=infosUser.firstname
     document.getElementById('lastname').value=infosUser.lastname
     document.getElementById('ville').value=infosUser.ville
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.getElementById('email').value=infosUser.email
 
     if(infosUser.tel!=-1){
-        document.getElementById('tel').value=infosUser.tel
+        document.getElementById('tel').value="0"+ infosUser.tel
     }
 
     let form=document.getElementById("form")
@@ -45,7 +45,6 @@ document.addEventListener("DOMContentLoaded", async function () {
     
         const params = {            //Paramètres à transmettre pour la requête POST
             userID: localStorage.getItem("userID"),
-            nom: formValues.nom,
             password: formValues.password,
             firstname:formValues.firstname,
             lastname:formValues.lastname,

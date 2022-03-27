@@ -170,15 +170,7 @@ const updateUtilisateur = async (req, res , next) => {
         codepostal=req.body.codepostal
     }
     
-    if(!/^([a-zA-Z0-9]{3,12})$/.test(req.body.nom)){
-        return res.json({
-            message: "Le format du nom d'utilisateur est incorrect.",
-            err:2
-        })
-    }
-
     let updatedUtilisateur = {
-        nom: req.body.nom,
         firstname:req.body.firstname,
         lastname:req.body.lastname,
         email: req.body.email,

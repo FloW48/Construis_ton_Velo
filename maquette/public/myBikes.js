@@ -110,18 +110,28 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                 let veloPieces=[]
                 
+                var fetch_url="/api/utilisateur/showUtilisateur?userID="+localStorage.getItem("userID")
+                var infosUtilisateur= await fetch(fetch_url);
+                var dataUtilisateur = await infosUtilisateur.json();
+
                 let autresInfos={
-                    nomClient:localStorage.getItem("userNom"),
-                    nomVelo:velo.nom
+                    nomClient:dataUtilisateur['response'].nom,
+                    nomVelo:velo.nom,
+                    nomFamilleClient: dataUtilisateur['response'].lastname,
+                    prenomClient: dataUtilisateur['response'].firstname,
+                    telClient: dataUtilisateur['response'].tel,
+                    emailClient: dataUtilisateur['response'].email,
+                    villeClient: dataUtilisateur['response'].ville,
+                    rueClient: dataUtilisateur['response'].rue,
+                    cpClient: dataUtilisateur['response'].codepostal
                 }
                 
 
                 for(let i=0;i<5;i++){
-                    var fetch_url="/api/equipement/showPiece?pieceID="+idpieces_velo[i]
+                    fetch_url="/api/equipement/showPiece?pieceID="+idpieces_velo[i]
                     var piece= await fetch(fetch_url);
                     var dataPiece = await piece.json();
 
-                    console.log(dataPiece['response'])
                     let infos_piece=dataPiece['response']
                     
                     delete infos_piece['_id'];
@@ -131,12 +141,11 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
                 
                 btnFacture.addEventListener("click", async ()=>{
-                    console.log(event.target.getAttribute("data-idVelo"))
                     let infosFacture={
                         veloPieces,
                         autresInfos
                     }              
-                    socket.emit("sauvegarder", infosFacture);
+                    socket.emit("facturePDF", infosFacture);
                 })
 
                 bottom.appendChild(btnFacture)
